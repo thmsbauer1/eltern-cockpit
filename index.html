@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#f5f2ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151a17" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cockpit">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>Eltern-Cockpit</title>
+<style>
+:root{
+  --bg:#f5f2ea;--card:#fffdf8;--ink:#1d2621;--muted:#68706a;--line:#e3ddd0;--soft:#efeadf;
+  --court:#2f6f4e;--court-soft:#dcebe1;
+  --m:#3567a8;--e:#c0603a;--d:#3f7d4f;--r:#7a58a8;--b:#1f7f86;--w:#b0782a;
+  --warn:#b4552f;--warn-soft:#f6e4da;--good:#2f6f4e;
+  --r1:#e9e3d6;--r2:#c9c1b0;
+  --tab:56px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#151a17;--card:#1d2420;--ink:#e9ece7;--muted:#9aa29c;--line:#2e3732;--soft:#252d28;
+  --court:#6dba8e;--court-soft:#21382b;
+  --m:#7ea6e0;--e:#e48d68;--d:#7fbf8d;--r:#b296de;--b:#5fc0c6;--w:#d9a95c;
+  --warn:#e8916b;--warn-soft:#3a2720;--good:#6dba8e;--r1:#2a322d;--r2:#45504a;}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding-bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 24px)}
+h1,h2,h3{line-height:1.2;margin:0}
+h1{font-size:1.55rem;letter-spacing:-.01em}
+h2{font-size:1.08rem}
+h3{font-size:.98rem}
+p{margin:0}
+button{font:inherit;color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header.top{padding:calc(env(safe-area-inset-top) + 18px) 0 10px}
+.top .row1{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.kicker{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.tiny{font-size:.76rem}
+.stack>*+*{margin-top:12px}
+.stack-s>*+*{margin-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card+.card,.sec+.sec{margin-top:14px}
+.sec{margin-top:22px}
+.sec>h2{margin:0 0 10px 2px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 12px 10px;min-width:0}
+.tile .lbl{font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.tile .big{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+.tile .sub{font-size:.76rem;color:var(--muted)}
+.delta{font-size:.78rem;font-weight:600}
+.delta.up{color:var(--good)}.delta.down{color:var(--warn)}.delta.eq{color:var(--muted)}
+.days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-top:10px}
+.days .d{aspect-ratio:1;border-radius:6px;background:var(--r1);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--muted)}
+.days .d.on{background:var(--court);color:#fff}
+.days .d.slam{box-shadow:inset 0 0 0 2px #e2b23c}
+.days .d.today{outline:2px solid var(--ink);outline-offset:1px}
+.dl{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-top:3px}
+.dl span{font-size:.6rem;text-align:center;color:var(--muted)}
+.hint{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.hint:first-of-type{border-top:0;padding-top:2px}
+.hint .ic{flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.hint.look .ic{background:var(--warn-soft)}
+.hint.good .ic{background:var(--court-soft)}
+.skill{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line)}
+.skill:first-child{border-top:0}
+.skill .nm{font-weight:600;font-size:.92rem;min-width:0}
+.skill .meta{font-size:.78rem;color:var(--muted);grid-column:1/-1;display:flex;gap:10px;align-items:center}
+.bar{height:7px;border-radius:4px;background:var(--r1);overflow:hidden;flex:1;min-width:60px}
+.bar i{display:block;height:100%;border-radius:4px}
+.lv{display:flex;gap:3px;align-items:center}
+.lv i{width:16px;height:8px;border-radius:3px;background:var(--r1)}
+.lv i.on{background:var(--m)}
+.stackbar{display:flex;height:16px;border-radius:6px;overflow:hidden;background:var(--r1);margin:8px 0 6px}
+.stackbar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend b{width:10px;height:10px;border-radius:3px;display:inline-block}
+.pill{display:inline-block;font-size:.74rem;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--muted);font-weight:600;white-space:nowrap}
+.pill.ok{background:var(--court-soft);color:var(--good)}
+.pill.no{background:var(--warn-soft);color:var(--warn)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:.88rem;font-weight:600;white-space:nowrap;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);height:var(--tab)}
+.tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.74rem;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs button svg{width:22px;height:22px}
+.tabs button.on{color:var(--court)}
+.text{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-size:1rem;line-height:1.55}
+.diff del{color:var(--warn);text-decoration:line-through;text-decoration-thickness:1.5px}
+.diff ins{color:var(--good);text-decoration:none;font-weight:600}
+table.t{width:100%;border-collapse:collapse;font-size:.84rem;font-variant-numeric:tabular-nums}
+table.t th{text-align:right;font-weight:600;color:var(--muted);font-size:.74rem;padding:6px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t th:first-child,table.t td:first-child{text-align:left}
+.tscroll{overflow-x:auto;margin:0 -4px}
+details{border-top:1px solid var(--line)}
+details:first-of-type{border-top:0}
+summary{list-style:none;cursor:pointer;padding:11px 0;display:flex;align-items:center;gap:10px;justify-content:space-between}
+summary::-webkit-details-marker{display:none}
+summary .chev{transition:transform .15s;color:var(--muted);flex:none}
+details[open]>summary .chev{transform:rotate(90deg)}
+.item{padding:8px 0;border-top:1px dashed var(--line);display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.item:first-child{border-top:0}
+.item .q{min-width:0;flex:1}
+.ans{color:var(--good);font-weight:600}
+.opt{display:inline-block;margin:3px 6px 0 0;font-size:.82rem;padding:1px 7px;border-radius:6px;background:var(--soft);color:var(--muted)}
+.opt.right{background:var(--court-soft);color:var(--good);font-weight:600}
+.pips{display:flex;gap:2px;flex:none;padding-top:5px}
+.pips i{width:7px;height:7px;border-radius:2px;background:var(--r1)}
+.pips i.on{background:var(--e)}
+.chart{width:100%;height:auto;display:block;margin-top:6px}
+.chart text{fill:var(--muted);font-size:9.5px;font-family:inherit}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.note{font-size:.8rem;color:var(--muted);margin-top:8px}
+.login{max-width:420px;margin:12vh auto 0}
+.inp{width:100%;font:inherit;font-size:1rem;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 16px;background:var(--court);color:#fff;font-weight:700;cursor:pointer;width:100%}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);width:auto;padding:8px 12px;font-weight:600;font-size:.88rem}
+.err{color:var(--warn);font-size:.88rem}
+.empty{padding:14px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:.9rem}
+.lvltab{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:6px}
+.lvltab td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}
+.lvltab td:first-child{width:62px;color:var(--muted);font-weight:600;white-space:nowrap}
+.lvltab tr.cur td{background:var(--court-soft)}
+.lvltab tr.cur td:first-child{color:var(--good)}
+.ex{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:var(--muted)}
+.mark{background:color-mix(in srgb,#e2b23c 30%,transparent);border-radius:3px;padding:0 2px}
+.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--court);border-radius:50%;animation:sp 1s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:420px){.grid3{gap:8px}.tile{padding:10px 9px}.tile .big{font-size:1.35rem}}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"><p class="muted" style="margin-top:30vh;text-align:center"><span class="spin"></span></p></div>
+<nav class="tabs" id="tabs" hidden><div class="in">
+  <button data-tab="heute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Überblick</button>
+  <button data-tab="aufgaben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6M8 11h6"/></svg>Aufgaben</button>
+  <button data-tab="entwicklung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/></svg>Entwicklung</button>
+</div></nav>
+
+<script src="familie-sync.js"></script>
+<script>
+/* Eltern-Cockpit – Lernstände, Aufgaben und Entwicklung aus dem Familienspeicher.
+   Liest die Inhalte direkt aus den Apps (../lern-match/inhalte.js usw.), damit immer der aktuelle Stoff zu sehen ist. */
+(function(){
+"use strict";
+const FS=window.FamilieSync;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad2=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());
+const today=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return iso(d);};
+const dLabel=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString("de-DE",o||{day:"numeric",month:"numeric"});
+const wd=s=>["So","Mo","Di","Mi","Do","Fr","Sa"][new Date(s+"T12:00:00").getDay()];
+const pct=(ok,n)=>n?Math.round(ok/n*100):null;
+const mondayOf=s=>{const d=new Date(s+"T12:00:00");const k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return iso(d);};
+const COL={m:"var(--m)",e:"var(--e)",d:"var(--d)",r:"var(--r)",b:"var(--b)",w:"var(--w)"};
+const SUBJ={m:"Mathe",e:"Englisch",d:"Deutsch"};
+const CHEV='<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>';
+
+/* ---------- Inhalte der Apps laden ---------- */
+const BASE="../";
+function loadScript(src){return new Promise(res=>{const s=document.createElement("script");s.src=src+"?v="+Date.now();s.onload=()=>res(true);s.onerror=()=>res(false);document.head.appendChild(s);});}
+const C={lm:null,faelle:[],tests:[],testData:{}};
+async function loadContent(){
+  await Promise.all([loadScript(BASE+"lern-match/inhalte.js"),loadScript(BASE+"spuernase/inhalte.js"),loadScript(BASE+"testtrainer/tests.js")]);
+  C.lm=window.INHALTE||null;C.faelle=window.FAELLE||[];C.tests=window.TESTS||[];
+  for(const t of C.tests){
+    ["STATIONEN","GENERALPROBE","MERKSAETZE","SKELETT","ZAEHNE","POSEN","TESTTAG"].forEach(k=>{try{delete window[k];}catch(e){window[k]=undefined;}});
+    const ok=await loadScript(BASE+"testtrainer/"+t.ordner+"/inhalte.js");
+    if(ok)C.testData[t.ordner]={stationen:window.STATIONEN||[],skelett:window.SKELETT||{},merk:window.MERKSAETZE||null};
+  }
+  buildIndex();
+}
+/* Gleiche Kennungen wie in Lern-Match */
+const IDX={words:[],eg:[],de:[]};
+const DE_CAT={s:"s, ss oder ß",i:"i oder ie",doppel:"Doppelte Mitlaute",ck:"k oder ck",tz:"z oder tz",gross:"Groß und klein",wortart:"Wortarten",fehler:"Fehlerwörter",zeitform:"Zeitformen",steigerung:"Steigern und vergleichen",satzglied:"Subjekt und Prädikat",satzzeichen:"Satzzeichen",rede:"Wörtliche Rede",pronomen:"Pronomen"};
+const TB_CAT={gross:"Groß und klein",doppel:"Doppelte Mitlaute",s:"s, ss oder ß",i:"i oder ie",ae:"e oder ä",ck:"k oder ck",tz:"z oder tz",dehnung:"Dehnungs-h",auslaut:"d/t oder g/k am Wortende",dass:"das oder dass",getrennt:"Zusammen oder getrennt",sonst:"Sonstiges"};
+const TB_HOW={selbst:"selbst gefunden",tipp:"mit Tipp",tipp2:"mit 2 Tipps",geloest:"Lösung gezeigt"};
+function buildIndex(){
+  const I=C.lm||{};
+  (I.englisch||[]).forEach((u,ui)=>u.woerter.forEach((w,wi)=>IDX.words.push({id:"u"+ui+"-"+wi,u:ui,unit:u.unit,de:w[0],en:w[1],note:w[2]||""})));
+  IDX.eg=(I.englischGrammatik||[]).map(x=>({id:"g-"+x[0],s:x[0],o:x[1],a:x[2],tip:x[3]||""}));
+  const D=I.deutsch||{},gap=(cat,w,a,o)=>IDX.de.push({id:cat+"-"+w,cat,q:w,o,a,show:w.replace(a,"<b>"+esc(a)+"</b>")});
+  (D.s||[]).forEach(([w,a])=>gap("s",w,a,["s","ss","ß"]));
+  (D.i||[]).forEach(([w,a])=>gap("i",w,a,["i","ie"]));
+  (D.doppel||[]).forEach(([w,a])=>{const dbl=a.length===2&&a[0]===a[1];gap("doppel",w,a,dbl?[a[0],a]:[a,a+a]);});
+  (D.ck||[]).forEach(([w,a])=>gap("ck",w,a,["k","ck"]));
+  (D.tz||[]).forEach(([w,a])=>gap("tz",w,a,["z","tz"]));
+  (D.gross||[]).forEach(([s,a,o])=>IDX.de.push({id:"gross-"+s,cat:"gross",q:s,a,show:esc(s)+' → <b>'+esc(a.charAt(0).toUpperCase()+a.slice(1))+'</b> groß'}));
+  (D.wortart||[]).forEach(([w,a])=>IDX.de.push({id:"wa-"+w,cat:"wortart",q:w,a,show:esc(w)+" → <b>"+esc(a)+"</b>"}));
+  (D.fehler||[]).forEach(([o,a,c])=>IDX.de.push({id:"fe-"+a,cat:"fehler",q:o.join(" · "),a,show:esc(o.join(" · "))+" → falsch: <s>"+esc(a)+"</s>, richtig: <b>"+esc(c)+"</b>"}));
+  (D.extra||[]).forEach(([cat,q,o,a,tip])=>IDX.de.push({id:"x-"+cat+"-"+q+"-"+o[a],cat,q,o,a,tip,show:esc(q)+" → <b>"+esc(o[a])+"</b>"}));
+}
+
+/* ---------- Mathe: was jede Stufe verlangt (aus den Aufgaben-Generatoren in Lern-Match) ---------- */
+const SKILLS={plus:"Plus im Kopf",minus:"Minus im Kopf",mal:"Mal rechnen",geteilt:"Geteilt rechnen",begriffe:"Fachbegriffe",ueberschlag:"Überschlagen",luecke:"Fehlende Zahl",mauer:"Zahlenmauer",probe:"Probe",schriftlich:"Schriftlich rechnen",text:"Textaufgaben",worte:"Aufgaben mit Worten",geschickt:"Geschickt rechnen",klammer:"Klammern und Punkt vor Strich",groessen:"Größen umrechnen",zeit:"Zeitspannen",schriftmal:"Schriftlich malnehmen",gtext:"Sachaufgaben mit Größen"};
+const BASIS=["plus","minus","mal","geteilt","begriffe","ueberschlag","luecke","mauer","probe","schriftlich","text"];
+const KAP={2:{n:"Kapitel 2: Addieren und Subtrahieren",s:["worte","geschickt","klammer","schriftlich","ueberschlag","luecke","text"]},3:{n:"Kapitel 3: Mit Größen rechnen",s:["groessen","zeit","gtext"]},5:{n:"Kapitel 5: Multiplizieren und Dividieren",s:["worte","klammer","schriftmal","mal","geteilt","text"]}};
+const LEVELS={
+  plus:[["Zweistellig plus einstellig","47 + 6"],["Zweistellig plus zweistellig","58 + 37"],["Dreistellig plus zweistellig","436 + 78"]],
+  minus:[["Zweistellig minus einstellig","63 − 7"],["Zweistellig minus zweistellig","82 − 37"],["Von 100 oder Dreistelligem zweistellig abziehen","523 − 68"]],
+  mal:[["Einmaleins mit 2, 3, 4, 5 und 10","4 · 7"],["Ganzes kleines Einmaleins","7 · 8"],["11 bis 19 mal einstellig, oder mal 10 und mal 100","14 · 6 · 37 · 100"]],
+  geteilt:[["Umkehrung der 2er-, 3er-, 4er-, 5er- und 10er-Reihe","35 : 5"],["Umkehrung des kleinen Einmaleins","56 : 8"],["Ergebnis zwischen 11 und 20","84 : 6"]],
+  begriffe:[["Summand, Summe, Minuend, Subtrahend, Differenz","58 + 23 = 81 → Wie heißt 23?"],["Zusätzlich Faktor, Produkt, Dividend, Divisor, Quotient","42 : 6 = 7 → Wie heißt 6?"],["Wie Stufe 2","—"]],
+  ueberschlag:[["Zwei Zweistellige auf Zehner runden und addieren","47 + 68 ≈ 50 + 70"],["Dreistellig plus oder minus zweistellig","318 + 46 ≈ 320 + 50"],["Dreistellig plus oder minus dreistellig","734 − 289 ≈ 730 − 290"]],
+  luecke:[["Lücke bei Plus und Minus","35 + ? = 52"],["Auch bei Mal und Geteilt","6 · ? = 42"],["Wie Stufe 2","? : 7 = 8"]],
+  mauer:[["3 Steine unten, Zahlen bis 20","Spitze der Mauer finden"],["3 Steine unten, Zahlen bis 50","—"],["4 Steine unten, Zahlen bis 15","vier Reihen hoch"]],
+  probe:[["Zweistellige Minusaufgabe mit der Umkehraufgabe prüfen","84 − 27 = 57?"],["Dreistellige Minusaufgabe prüfen","563 − 78 = 485?"],["Wie Stufe 2","—"]],
+  schriftlich:[["Dreistellig plus dreistellig","437 + 268"],["Vierstellig plus, oder dreistellig minus","3482 + 1796 · 812 − 347"],["Vierstellig plus und minus","7215 − 3468"]],
+  text:[["Ein Rechenschritt, kleine Zahlen (Wechselgeld, Bälle verteilen)","Griffband 7 € + Flasche 9 €, bezahlt mit 20 €"],["Größere Zahlen, auch Mal (Match-Dauer, Spardose)","Satz 1: 34 Min., Satz 2: 41 Min."],["Auch zwei Rechenschritte","5 Dosen zu je 4 € von 37 € Erspartem"]],
+  worte:[["„Summe“, „Differenz“, „vermindere“ … bis 100","Bilde die Differenz von 84 und 29."],["Zahlen bis 500","Subtrahiere 178 von 452."],["Zahlen bis 1000, ab Kapitel 5 auch Produkt und Quotient","Dividiere 96 durch 8."]],
+  geschickt:[["Zehner bilden durch Vertauschen","7 + 26 + 3"],["Hunderter bilden","38 + 54 + 62"],["Vier Zahlen, Hunderter bilden","38 + 54 + 62 + 17"]],
+  klammer:[["Klammer zuerst, Zahlen bis etwa 60","45 − (18 − 6)"],["Zahlen bis etwa 150","132 − (27 + 18)"],["Zahlen bis etwa 400; ab Kapitel 5 auch Punkt vor Strich","7 + 4 · 6"]],
+  groessen:[["Einfach umrechnen: € und ct, m und cm, km und m, kg und g, h und min","3 m = ? cm"],["Gemischte Angaben, auch t und mm","4 m 25 cm = ? cm"],["Kommazahlen","3,45 m = ? cm"]],
+  zeit:[["Zeitspanne bis 45 Minuten","14:20 bis 14:55 Uhr"],["Zeitspanne bis knapp 2 Stunden","9:35 bis 10:50 Uhr"],["Zeitspanne von 70 bis 200 Minuten","15:10 bis 17:45 Uhr"]],
+  schriftmal:[["Dreistellig mal einstellig","318 · 7"],["Vierstellig mal einstellig","2346 · 6"],["Zweistellig mal zweistellig","47 · 23"]],
+  gtext:[["Sachaufgaben mit Gramm, Cent, Metern und Minuten","Ein Ball wiegt 57 g. Wie viel wiegen 4 Bälle?"],["Wie Stufe 1, größere Mengen","—"],["Wie Stufe 1, größere Mengen","—"]]
+};
+
+/* ---------- Zustand ---------- */
+const S={tab:"heute",sub:"mathe",kids:[],kid:null,P:{},log:[],daily:[],loaded:null,err:null,range:28,open:{}};
+try{const t=localStorage.getItem("cockpit-tab");if(t)S.tab=t;const s=localStorage.getItem("cockpit-sub");if(s)S.sub=s;}catch(e){}
+
+async function loadKid(){
+  const id=S.kid.id,q=encodeURIComponent;
+  const [prog,log,daily]=await Promise.all([
+    FS.rest("/rest/v1/app_progress?select=app,data,updated_at&member_id=eq."+id),
+    FS.rest("/rest/v1/activity_log?select=app,kind,value,occurred_at&member_id=eq."+id+"&order=occurred_at.desc&limit=2000"),
+    FS.rest("/rest/v1/progress_daily?select=app,day,m:data->m,en:data->en,eg:data->eg,de:data->de,cards:data->cards&member_id=eq."+id+"&order=day.asc").catch(()=>[])
+  ]);
+  S.P={};(prog||[]).forEach(r=>S.P[r.app]=r);S.log=log||[];S.daily=daily||[];S.loaded=new Date();
+}
+const LM=()=>(S.P["lern-match"]||{}).data||null;
+const SN=()=>(S.P["spuernase"]||{}).data||null;
+const TT=o=>(S.P["testtrainer-"+o]||{}).data||null;
+
+/* ---------- Kennzahlen ---------- */
+function histSum(h,from,to){const r={m:[0,0],e:[0,0],d:[0,0]};if(!h)return r;Object.keys(h).forEach(k=>{if(k>=from&&k<=to)["m","e","d"].forEach(s=>{const v=h[k][s];if(v){r[s][0]+=v[0];r[s][1]+=v[1];}});});return r;}
+function trainDays(){
+  const set={},add=(o,src)=>Object.keys(o||{}).forEach(k=>{(set[k]=set[k]||[]).push(src);});
+  const lm=LM(),sn=SN();
+  if(lm)add(lm.days,"lm");if(sn){add(sn.days,"sn");add(sn.log,"sn");}
+  C.tests.forEach(t=>{const d=TT(t.ordner);if(d)add(d.days,"tt");});
+  return set;
+}
+function streak(days){let d=today();if(!days[d])d=addDays(d,-1);let n=0;while(days[d]){n++;d=addDays(d,-1);}return n;}
+const vocabState=id=>((LM()||{}).en||{})[id];
+function vocabBuckets(en){const b={neu:0,wack:0,lern:0,sicher:0};IDX.words.forEach(w=>{const s=en&&en[w.id];if(!s)b.neu++;else if((s.box||0)<=1)b.wack++;else if(s.box<=3)b.lern++;else b.sicher++;});return b;}
+
+function hints(){
+  const lm=LM(),H=[];if(!lm)return H;
+  const m=lm.m||{};
+  const weakM=Object.keys(m).filter(k=>m[k].n>=5&&m[k].ok/m[k].n<.5).sort((a,b)=>m[a].ok/m[a].n-m[b].ok/m[b].n);
+  if(weakM.length)H.push({t:"look",ic:"🔍",h:`Mathe: ${weakM.length===1?"ein Bereich":weakM.length+" Bereiche"} unter 50 %`,p:weakM.map(k=>{const s=m[k];return `<b>${esc(SKILLS[k]||k)}</b>: ${s.ok} von ${s.n} richtig, Stufe ${s.lvl}${s.run<=-2?' <span style="color:var(--warn)">· zuletzt '+(-s.run)+'× falsch in Folge</span>':s.run>=2?' <span style="color:var(--good)">· zuletzt '+s.run+'× richtig in Folge</span>':""}`;}).join("<br>")+"<br>Vielleicht einmal gemeinsam eine Aufgabe rechnen.",go:"mathe"});
+  const hard=IDX.words.filter(w=>{const s=vocabState(w.id);return s&&(s.miss||0)>=3;}).sort((a,b)=>vocabState(b.id).miss-vocabState(a.id).miss);
+  if(hard.length)H.push({t:"look",ic:"🔤",h:`${hard.length===1?"Ein Englischwort hakt":hard.length+" Englischwörter haken"}`,p:hard.slice(0,6).map(w=>`<b>${esc(w.en[0])}</b> (${esc(w.de)})`).join(", "),go:"englisch"});
+  const de=lm.de||{};const weakDe=IDX.de.filter(d=>{const s=de[d.id];return s&&s.n>=3&&s.ok/s.n<.5;});
+  if(weakDe.length)H.push({t:"look",ic:"✏️",h:"Deutsch: mehrfach daneben",p:weakDe.sort((a,b)=>(de[a.id].last===false?0:1)-(de[b.id].last===false?0:1)).slice(0,5).map(d=>{const q=d.q.length>40?d.q.slice(0,40)+"…":d.q,qq=/^[„"]/.test(q)?esc(q):"„"+esc(q)+"“";return `${esc(DE_CAT[d.cat]||d.cat)}: ${qq} (${de[d.id].ok} von ${de[d.id].n})${de[d.id].last===false?' <span style="color:var(--warn)">· zuletzt falsch</span>':' <span style="color:var(--good)">· zuletzt richtig</span>'}`;}).join("<br>"),go:"deutsch"});
+  const egW=IDX.eg.filter(g=>((lm.eg||{})[g.id]||{}).last===false);
+  if(egW.length>=3)H.push({t:"look",ic:"🇬🇧",h:`Grammatik: ${egW.length} Sätze zuletzt falsch`,p:egW.slice(0,3).map(g=>"„"+esc(g.s)+"“").join(", "),go:"grammatik"});
+  const top=Object.keys(m).filter(k=>m[k].lvl===3&&m[k].n>=6&&m[k].ok/m[k].n>=.7);
+  if(top.length)H.push({t:"good",ic:"⭐",h:`Mathe auf höchster Stufe: ${top.length} ${top.length===1?"Bereich":"Bereiche"}`,p:top.map(k=>SKILLS[k]).join(", ")});
+  const sicher=vocabBuckets(lm.en).sicher;if(sicher)H.push({t:"good",ic:"🧠",h:`${sicher} Vokabeln sitzen fest`,p:"Box 4 oder 5 – sie kommen nur noch selten zur Wiederholung."});
+  return H;
+}
+
+/* ---------- Diagramme (SVG, ohne Bibliothek) ---------- */
+function nice(v){const p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p;}
+function lineChart(o){
+  const W=380,H=o.h||170,L=40,R=o.right||78,T=10,B=22,n=o.x.length;if(!n)return"";
+  const ymax=o.ymax!=null?o.ymax:nice(Math.max(1,...o.series.flatMap(s=>s.v.filter(v=>v!=null)))),ymin=o.ymin||0;
+  const X=i=>L+(n===1?(W-L-R)/2:i*(W-L-R)/(n-1)),Y=v=>T+(H-T-B)*(1-(v-ymin)/(ymax-ymin));
+  const ticks=o.ticks||[ymin,(ymin+ymax)/2,ymax].map(v=>Math.round(v));
+  let g=ticks.map(t=>`<line class="grid" x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}"/><text x="${L-6}" y="${Y(t)+3}" text-anchor="end">${t}${o.unit||""}</text>`).join("");
+  const step=Math.max(1,Math.ceil(n/5));
+  g+=o.x.map((x,i)=>i%step===0||i===n-1?`<text x="${X(i)}" y="${H-8}" text-anchor="middle">${esc(x)}</text>`:"").join("");
+  const labels=[];
+  o.series.forEach(s=>{
+    let d="",pen=false;s.v.forEach((v,i)=>{if(v==null){pen=false;return;}d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1);pen=true;});
+    g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    s.v.forEach((v,i)=>{if(v!=null&&(o.dots||s.v.filter(x=>x!=null).length<12))g+=`<circle cx="${X(i)}" cy="${Y(v)}" r="2.6" fill="${s.c}"><title>${esc(o.x[i])}: ${v}${o.unit||""}</title></circle>`;});
+    let li=-1;s.v.forEach((v,i)=>{if(v!=null)li=i;});if(li>=0)labels.push({y:Y(s.v[li]),x:X(li),c:s.c,t:s.name+" "+s.v[li]+(o.unit||"")});
+  });
+  labels.sort((a,b)=>a.y-b.y);for(let i=1;i<labels.length;i++)if(labels[i].y-labels[i-1].y<12)labels[i].y=labels[i-1].y+12;
+  g+=labels.map(l=>`<text x="${W-R+6}" y="${l.y+3}" style="fill:${l.c};font-weight:700">${esc(l.t)}</text>`).join("");
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label||"")}">${g}</svg>`;
+}
+function barChart(o){
+  const W=380,H=o.h||150,L=30,R=6,T=10,B=22,n=o.x.length;if(!n)return"";
+  const tot=o.x.map((_,i)=>o.series.reduce((a,s)=>a+(s.v[i]||0),0)),ymax=nice(Math.max(1,...tot));
+  const bw=(W-L-R)/n,Y=v=>T+(H-T-B)*(1-v/ymax);
+  let g=[0,ymax/2,ymax].map(t=>`<line class="grid" x1="${L}" x2="${W-R}" y1="${Y(t)}" y2="${Y(t)}"/><text x="${L-6}" y="${Y(t)+3}" text-anchor="end">${Math.round(t)}</text>`).join("");
+  const step=Math.max(1,Math.ceil(n/5));
+  o.x.forEach((x,i)=>{let base=0;const cx=L+i*bw;
+    o.series.forEach(s=>{const v=s.v[i]||0;if(v){g+=`<rect x="${(cx+bw*.18).toFixed(1)}" width="${(bw*.64).toFixed(1)}" y="${Y(base+v).toFixed(1)}" height="${(Y(base)-Y(base+v)).toFixed(1)}" fill="${s.c}" rx="1.5"><title>${esc(x)} · ${esc(s.name)}: ${v}</title></rect>`;base+=v;}});
+    if(i%step===0||i===n-1)g+=`<text x="${cx+bw/2}" y="${H-8}" text-anchor="middle">${esc(x)}</text>`;});
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label||"")}">${g}</svg>`;
+}
+const legend=items=>`<div class="legend">${items.map(([n,c])=>`<span><b style="background:${c}"></b>${esc(n)}</span>`).join("")}</div>`;
+
+/* ---------- Ansicht: Überblick ---------- */
+function vHeute(){
+  const lm=LM(),sn=SN(),t=today();
+  if(!lm&&!sn&&!C.tests.some(x=>TT(x.ordner)))return `<div class="empty" style="margin-top:20px">${esc(S.kid.display_name)} hat noch keinen Stand im Familienspeicher. Er erscheint, sobald ${esc(S.kid.display_name)} in einer App angemeldet ist und übt.</div>`;
+  const days=trainDays(),slams=(lm&&lm.slams)||{};
+  const last14=[];for(let i=13;i>=0;i--)last14.push(addDays(t,-i));
+  const n7=last14.slice(7).filter(d=>days[d]).length,st=streak(days);
+  const cur=histSum(lm&&lm.hist,addDays(t,-6),t),prev=histSum(lm&&lm.hist,addDays(t,-13),addDays(t,-7));
+  const tile=k=>{const a=pct(cur[k][0],cur[k][1]),b=pct(prev[k][0],prev[k][1]);
+    const dl=a==null||b==null?"":a-b>=3?`<span class="delta up">▲ ${a-b} Pkt.</span>`:b-a>=3?`<span class="delta down">▼ ${b-a} Pkt.</span>`:`<span class="delta eq">gleich</span>`;
+    return `<div class="tile"><div class="lbl"><span class="dot" style="background:${COL[k]}"></span>${SUBJ[k]}</div>
+      <div class="big">${a==null?"–":a+"<small style='font-size:.55em;font-weight:600'> %</small>"}</div>
+      <div class="sub">${cur[k][1]} Aufgaben</div><div class="sub">${dl||"&nbsp;"}</div></div>`;};
+  const H=hints();
+  let h=`<div class="sec"><div class="card">
+     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2>Trainingstage</h2><span class="small muted">${n7} von 7 Tagen${st>1?` · Serie ${st} Tage`:""}</span></div>
+     <div class="days">${last14.map(d=>`<div class="d ${days[d]?"on":""} ${slams[d]?"slam":""} ${d===t?"today":""}" title="${dLabel(d,{weekday:"short",day:"numeric",month:"numeric"})}${slams[d]?" · Grand Slam":""}">${new Date(d+"T12:00:00").getDate()}</div>`).join("")}</div>
+     <div class="dl">${last14.map(d=>`<span>${wd(d)}</span>`).join("")}</div>
+     ${lm?`<p class="note">Gold umrandet: Grand-Slam-Tag. Pokale bisher: ${["ao","fo","wi","us"].map(k=>({ao:"Melbourne",fo:"Paris",wi:"London",us:"New York"})[k]+" "+((lm.titles||{})[k]||0)).join(" · ")}</p>`:""}
+   </div></div>`;
+  if(lm)h+=`<div class="sec"><h2>Letzte 7 Tage <span class="small muted" style="font-weight:400">· Anteil richtig, zur Vorwoche</span></h2><div class="grid3">${tile("m")}${tile("e")}${tile("d")}</div></div>`;
+  if(H.length)h+=`<div class="sec"><h2>Worauf ihr schauen könnt</h2><div class="card">${H.map(x=>`<div class="hint ${x.t}"><div class="ic">${x.ic}</div><div class="stack-s" style="min-width:0;flex:1"><p><b>${esc(x.h)}</b></p><p class="small muted">${x.p}</p>${x.go?`<button class="btn ghost" style="margin-top:6px" data-go="${x.go}">Aufgaben ansehen</button>`:""}</div></div>`).join("")}</div></div>`;
+  if(lm)h+=secMathe(lm)+secEnglisch(lm)+secDeutsch(lm)+secSchreiben(lm);
+  h+=secLesen(sn)+secTests();
+  return h;
+}
+function secMathe(lm){
+  const m=lm.m||{},kap=KAP[lm.mk]||KAP[2],rel=[...new Set(kap.s)],used=Object.keys(SKILLS).filter(k=>m[k]&&m[k].n);
+  const order=[...rel.filter(k=>m[k]),...used.filter(k=>!rel.includes(k))];
+  const row=k=>{const s=m[k],a=pct(s.ok,s.n),c=a<50?"var(--warn)":a<75?"var(--w)":"var(--good)";
+    return `<div class="skill"><div class="nm">${esc(SKILLS[k]||k)}${rel.includes(k)?' <span class="pill">Kapitel</span>':""}</div><div class="lv" title="Stufe ${s.lvl} von 3">${[1,2,3].map(i=>`<i class="${s.lvl>=i?"on":""}"></i>`).join("")}</div>
+      <div class="meta"><div class="bar"><i style="width:${a}%;background:${c}"></i></div><span style="min-width:120px;text-align:right">${s.ok} von ${s.n} richtig · ${a} %</span></div></div>`;};
+  return `<div class="sec"><h2>Mathe</h2><div class="card"><p class="small muted">Schwerpunkt: <b style="color:var(--ink)">${esc(kap.n)}</b>. Kästchen = Stufe 1 bis 3. Nach drei richtigen Antworten in Folge geht es eine Stufe hoch, nach zwei falschen wieder runter.</p>
+    <div style="margin-top:8px">${order.length?order.map(row).join(""):'<p class="muted small">Noch keine Matheaufgaben.</p>'}</div></div></div>`;
+}
+function secEnglisch(lm){
+  const b=vocabBuckets(lm.en),tot=IDX.words.length||1,t=today();
+  const due=IDX.words.filter(w=>{const s=(lm.en||{})[w.id];return s&&s.due&&s.due<=t;}).length;
+  const eg=lm.eg||{},egOk=IDX.eg.filter(g=>(eg[g.id]||{}).ok>=2).length,egSeen=IDX.eg.filter(g=>eg[g.id]).length;
+  const w=v=>(v/tot*100).toFixed(1)+"%";
+  return `<div class="sec"><h2>Englisch</h2><div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><h3>Vokabeln</h3><span class="small muted">${IDX.words.length} im Wortschatz${due?` · ${due} heute fällig`:""}</span></div>
+    <div class="stackbar"><i style="width:${w(b.sicher)};background:var(--e)"></i><i style="width:${w(b.lern)};background:color-mix(in srgb,var(--e) 55%,transparent)"></i><i style="width:${w(b.wack)};background:color-mix(in srgb,var(--e) 25%,transparent)"></i></div>
+    ${legend([["Sicher "+b.sicher,"var(--e)"],["Am Lernen "+b.lern,"color-mix(in srgb,var(--e) 55%,transparent)"],["Wackelig "+b.wack,"color-mix(in srgb,var(--e) 25%,transparent)"],["Noch nicht dran "+b.neu,"var(--r1)"]])}
+    <p class="note">Jede Vokabel wandert bei richtiger Antwort eine Box weiter (bis 5) und kommt dann seltener dran. Sicher = Box 4–5.</p>
+    <h3 style="margin-top:14px">Grammatik</h3><p class="small muted" style="margin-top:4px">${egOk} von ${IDX.eg.length} Satzaufgaben sicher (zweimal richtig), ${egSeen} schon geübt.</p></div></div>`;
+}
+function secDeutsch(lm){
+  const de=lm.de||{},cats={},tot={};IDX.de.forEach(d=>{tot[d.cat]=(tot[d.cat]||0)+1;const s=de[d.id];if(!s)return;const c=cats[d.cat]||(cats[d.cat]={ok:0,n:0,items:0,last:0});c.ok+=s.ok;c.n+=s.n;c.items++;if(s.last!==false)c.last++;});
+  const ks=Object.keys(cats).sort((a,b)=>cats[a].last/cats[a].items-cats[b].last/cats[b].items||cats[a].ok/cats[a].n-cats[b].ok/cats[b].n);
+  return `<div class="sec"><h2>Deutsch</h2><div class="card">${ks.length?ks.map(k=>{const c=cats[k],a=pct(c.ok,c.n),col=a<50?"var(--warn)":a<75?"var(--w)":"var(--good)";
+    const l=pct(c.last,c.items),lc=l<50?"var(--warn)":l<80?"var(--w)":"var(--good)";
+    return `<div class="skill"><div class="nm">${esc(DE_CAT[k]||k)}</div><span class="small muted">${c.items} von ${tot[k]} geübt</span><div class="meta"><div class="bar"><i style="width:${l}%;background:${lc}"></i></div><span style="min-width:150px;text-align:right">${c.last} von ${c.items} zuletzt richtig</span></div><div class="meta tiny">Alle Versuche: ${c.ok} von ${c.n} richtig (${a} %)</div></div>`;}).join(""):'<p class="small muted">Noch keine Deutschaufgaben.</p>'}
+    <p class="note">Der Balken zeigt, wie viele der geübten Wörter und Sätze beim letzten Mal richtig waren. „Alle Versuche“ zählt auch die ersten mit, bevor eine Regel saß.</p></div></div>`;
+}
+function wordDiff(a,b){
+  const A=a.split(/\s+/).filter(Boolean),B=b.split(/\s+/).filter(Boolean),n=A.length,m=B.length,D=[];
+  for(let i=0;i<=n;i++){D[i]=new Array(m+1).fill(0);}
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)D[i][j]=A[i]===B[j]?D[i+1][j+1]+1:Math.max(D[i+1][j],D[i][j+1]);
+  let i=0,j=0,o=[];while(i<n&&j<m){if(A[i]===B[j]){o.push(esc(A[i]));i++;j++;}else if(D[i+1][j]>=D[i][j+1]){o.push("<del>"+esc(A[i])+"</del>");i++;}else{o.push("<ins>"+esc(B[j])+"</ins>");j++;}}
+  while(i<n)o.push("<del>"+esc(A[i++])+"</del>");while(j<m)o.push("<ins>"+esc(B[j++])+"</ins>");return o.join(" ");
+}
+function secSchreiben(lm){
+  const tb=lm.tb||{},E=tb.entries||[],cats=Object.entries(tb.cats||{}).sort((a,b)=>b[1].n-a[1].n);
+  if(!E.length)return `<div class="sec"><h2>Schreiben (Tie-Break)</h2><div class="empty">Noch kein Tie-Break-Text gespeichert.</div></div>`;
+  const D=tb.days||{},dk=Object.keys(D),w=dk.reduce((a,k)=>a+(D[k].w||0),0),f=dk.reduce((a,k)=>a+(D[k].f||0),0),s=dk.reduce((a,k)=>a+(D[k].s||0),0);
+  return `<div class="sec"><h2>Schreiben (Tie-Break)</h2><div class="card">
+    <p class="small muted">${dk.length} ${dk.length===1?"Text":"Texte"}, ${w} Wörter, ${f} Fehler – davon ${s} ganz allein gefunden.</p>
+    ${cats.length?`<p class="small" style="margin-top:6px">Häufigste Fehlerarten: ${cats.slice(0,4).map(([k,v])=>`<span class="pill">${esc(TB_CAT[k]||k)} ${v.n}</span>`).join(" ")}</p>`:""}
+    <div style="margin-top:8px">${E.slice(0,5).map((e,i)=>`<details ${i===0?"open":""}><summary><span><b>${dLabel(e.d,{weekday:"short",day:"numeric",month:"numeric"})}</b> <span class="muted small">· ${esc(e.thema||"")}</span></span>${CHEV}</summary>
+      <div class="stack" style="padding-bottom:12px">${e.anlass?`<p class="small muted">${esc(e.anlass)}</p>`:""}
+      <p class="text diff">${e.final&&e.final!==e.text?wordDiff(e.text,e.final):esc(e.text)}</p>
+      ${(e.f||[]).length?`<div class="small">${e.f.map(x=>`<div style="padding:3px 0"><s class="muted">${esc(x.w)}</s> → <b>${esc(x.c)}</b> <span class="pill ${x.h==="selbst"?"ok":x.h==="geloest"?"no":""}">${esc(TB_HOW[x.h]||"offen")}</span> <span class="tiny muted">${esc(TB_CAT[x.k]||"")}</span></div>`).join("")}</div>`:'<p class="small muted">Keine Fehler.</p>'}</div></details>`).join("")}</div>
+    <p class="note">Durchgestrichen: so stand es zuerst da. Grün: ${esc(S.kid.display_name)}s Verbesserung.</p></div></div>`;
+}
+function readEvents(){return S.log.filter(e=>e.app==="spuernase"&&e.kind==="kapitel").slice().reverse();}
+function secLesen(sn){
+  if(!C.faelle.length)return"";
+  if(!sn)return `<div class="sec"><h2>Lesen (Spürnase)</h2><div class="empty">Noch kein Lesestand im Familienspeicher. Er kommt, sobald ${esc(S.kid.display_name)} Spürnase angemeldet öffnet.</div></div>`;
+  const ev=readEvents(),wpm=ev.filter(e=>e.value.wpm).map(e=>e.value.wpm),avg=wpm.length?Math.round(wpm.slice(-5).reduce((a,b)=>a+b,0)/Math.min(5,wpm.length)):null;
+  return `<div class="sec"><h2>Lesen (Spürnase)</h2><div class="card">
+    ${avg?`<p class="small muted">Lesetempo zuletzt etwa <b style="color:var(--ink)">${avg} Wörter pro Minute</b> (Schnitt der letzten ${Math.min(5,wpm.length)} Kapitel).</p>`:""}
+    ${C.faelle.map(f=>{const st=(sn.faelle||{})[f.id]||{},kap=st.kap||{},done=f.kapitel.filter((_,i)=>kap[i]&&kap[i].fertig).length;
+      const q=f.kapitel.reduce((a,k,i)=>{const r=kap[i];if(r&&r.fertig){a[0]+=r.first||0;a[1]+=k.fragen.length;}return a;},[0,0]);
+      return `<div class="skill"><div class="nm">${f.nr}. ${esc(f.titel)}</div><span class="pill ${st.geloest?"ok":""}">${st.geloest?"gelöst":done?done+" von "+f.kapitel.length+" Kapiteln":"noch nicht begonnen"}</span>
+        ${q[1]?`<div class="meta"><div class="bar"><i style="width:${pct(q[0],q[1])}%;background:var(--r)"></i></div><span style="min-width:120px;text-align:right">${q[0]} von ${q[1]} Fragen auf Anhieb</span></div>`:""}</div>`;}).join("")}</div></div>`;
+}
+function secTests(){
+  if(!C.tests.length)return"";
+  return `<div class="sec"><h2>Testtrainer</h2><div class="card">${C.tests.map(t=>{const d=TT(t.ordner),T=C.testData[t.ordner],ids=T?T.stationen.flatMap(s=>s.karten.map(k=>k.id)):[];
+    if(!d)return `<div class="skill"><div class="nm">${esc(t.fach)}: ${esc(t.titel)}</div><span class="small muted">${dLabel(t.datum)}</span><div class="meta">Noch kein Stand im Familienspeicher.</div></div>`;
+    const c=d.cards||{},sicher=ids.filter(id=>(c[id]||{}).box>=2).length,seen=ids.filter(id=>(c[id]||{}).seen).length;
+    return `<div class="skill"><div class="nm">${esc(t.fach)}: ${esc(t.titel)}</div><span class="small muted">Test am ${dLabel(t.datum)}</span>
+      <div class="meta"><div class="bar"><i style="width:${pct(sicher,ids.length||1)}%;background:var(--b)"></i></div><span style="min-width:120px;text-align:right">${sicher} von ${ids.length} Karten sicher · ${seen} gesehen</span></div></div>`;}).join("")}</div></div>`;
+}
+
+/* ---------- Ansicht: Aufgaben ---------- */
+const SUBS=[["mathe","Mathe"],["englisch","Vokabeln"],["grammatik","Grammatik"],["deutsch","Deutsch"],["schreiben","Schreibanlässe"],["lesen","Spürnase"],["tests","Tests"]];
+function vAufgaben(){
+  const body={mathe:aMathe,englisch:aEnglisch,grammatik:aGrammatik,deutsch:aDeutsch,schreiben:aSchreiben,lesen:aLesen,tests:aTests}[S.sub]||aMathe;
+  return `<div class="chips" style="margin-top:6px">${SUBS.map(([k,n])=>`<button class="chip ${S.sub===k?"on":""}" data-sub="${k}">${n}</button>`).join("")}</div>${body()}`;
+}
+const status=s=>!s?'<span class="pill">neu</span>':s.last===false?`<span class="pill no">${s.ok}/${s.n}</span>`:`<span class="pill ok">${s.ok}/${s.n}</span>`;
+function aMathe(){
+  const lm=LM()||{},m=lm.m||{},mk=lm.mk||2;
+  const block=k=>{const s=m[k],L=LEVELS[k]||[],cur=s?s.lvl:0;
+    return `<details ${S.open["m-"+k]?"open":""} data-k="m-${k}"><summary><span><b>${esc(SKILLS[k])}</b><br><span class="small muted">${s?`Stufe ${s.lvl} · ${s.ok} von ${s.n} richtig`:"noch nicht geübt"}</span></span>${CHEV}</summary>
+      <table class="lvltab">${L.map((l,i)=>`<tr class="${cur===i+1?"cur":""}"><td>Stufe ${i+1}${cur===i+1?" ◂":""}</td><td>${esc(l[0])}${l[1]&&l[1]!=="—"?`<br><span class="ex">${esc(l[1])}</span>`:""}</td></tr>`).join("")}</table><div style="height:10px"></div></details>`;};
+  const kapK=Object.keys(KAP);
+  return `<div class="sec"><div class="card"><p class="small muted">Die Matheaufgaben werden bei jedem Match neu gewürfelt. Hier steht, was jede Stufe verlangt, mit einem Beispiel. Die markierte Zeile ist ${esc(S.kid.display_name)}s aktuelle Stufe.</p></div></div>
+    ${kapK.map(k=>`<div class="sec"><h2>${esc(KAP[k].n)}${+k===mk?' <span class="pill ok">aktuell</span>':""}</h2><div class="card">${[...new Set(KAP[k].s)].map(block).join("")}</div></div>`).join("")}
+    <div class="sec"><h2>Grundlagen (jedes Match)</h2><div class="card">${BASIS.map(block).join("")}</div></div>`;
+}
+function aEnglisch(){
+  const en=(LM()||{}).en||{},units={};IDX.words.forEach(w=>(units[w.unit]=units[w.unit]||[]).push(w));
+  const only=S.open.hard;
+  return `<div class="sec"><div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><p class="small muted">Deutsch → Englisch, wie in der App abgefragt. Balken = Box 0–5.</p><button class="btn ghost" data-toggle="hard">${only?"Alle zeigen":"Nur schwierige"}</button></div></div>
+  ${Object.entries(units).map(([u,ws])=>{const list=only?ws.filter(w=>(en[w.id]||{}).miss>=2):ws;if(!list.length)return"";const known=ws.filter(w=>(en[w.id]||{}).box>=4).length;
+    return `<div class="sec"><h2>${esc(u)}</h2><div class="card"><details ${S.open["u-"+u]||only?"open":""} data-k="u-${esc(u)}"><summary><span class="small muted">${ws.length} Wörter · ${known} sicher</span>${CHEV}</summary>
+      ${list.map(w=>{const s=en[w.id];return `<div class="item"><div class="q"><b>${esc(w.en.join(" / "))}</b> <span class="muted">– ${esc(w.de)}</span>${w.note?`<div class="tiny muted">${esc(w.note)}</div>`:""}${s&&s.miss?`<div class="tiny" style="color:var(--warn)">${s.miss}× vergessen</div>`:""}</div><div class="pips">${[1,2,3,4,5].map(i=>`<i class="${s&&s.box>=i?"on":""}"></i>`).join("")}</div></div>`;}).join("")}</details></div></div>`;}).join("")}`;
+}
+function aGrammatik(){
+  const eg=(LM()||{}).eg||{};
+  return `<div class="sec"><div class="card">${IDX.eg.map(g=>`<div class="item"><div class="q"><div>${esc(g.s).replace("___",`<span class="ans">${esc(g.o[g.a])}</span>`)}</div><div>${g.o.map((o,i)=>`<span class="opt ${i===g.a?"right":""}">${esc(o)}</span>`).join("")}</div>${g.tip?`<div class="tiny muted" style="margin-top:3px">${esc(g.tip)}</div>`:""}</div>${status(eg[g.id])}</div>`).join("")}</div></div>`;
+}
+function aDeutsch(){
+  const de=(LM()||{}).de||{},cats={};IDX.de.forEach(d=>(cats[d.cat]=cats[d.cat]||[]).push(d));
+  return Object.entries(cats).map(([c,items])=>{const seen=items.filter(d=>de[d.id]).length;
+    return `<div class="sec"><div class="card"><details ${S.open["d-"+c]?"open":""} data-k="d-${c}"><summary><span><b>${esc(DE_CAT[c]||c)}</b><br><span class="small muted">${items.length} Aufgaben · ${seen} geübt</span></span>${CHEV}</summary>
+      ${items.map(d=>`<div class="item"><div class="q small">${d.show}${d.tip?`<div class="tiny muted">${esc(d.tip)}</div>`:""}</div>${status(de[d.id])}</div>`).join("")}</details></div></div>`;}).join("");
+}
+function aSchreiben(){
+  const tb=(C.lm||{}).tiebreak;if(!tb)return '<div class="empty" style="margin-top:14px">Keine Schreibanlässe gefunden.</div>';
+  const names=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+  return `<div class="sec"><div class="card"><p class="small muted">Nach dem Match schreibt ${esc(S.kid.display_name)} mindestens ${tb.minWoerter||15} Wörter zu einem Anlass des Tages. Die App sucht Fehler und gibt Tipps, statt sie gleich zu verbessern.</p></div></div>
+    ${Object.entries(tb.tage||{}).map(([k,d])=>`<div class="sec"><h2>${esc(d.em||"")} ${esc(names[+k]||k)} · ${esc(d.thema)}</h2><div class="card">${(d.anlaesse||[]).map(a=>`<div class="item"><div class="q small">${esc(a)}</div></div>`).join("")}</div></div>`).join("")}`;
+}
+function aLesen(){
+  const sn=SN()||{},ev=readEvents();
+  return C.faelle.map(f=>{const st=(sn.faelle||{})[f.id]||{};
+    return `<div class="sec"><h2>${f.nr}. ${esc(f.titel)} <span class="pill">Stufe ${f.stufe}</span></h2><div class="card"><p class="small muted">${esc(f.art)} · ${esc(f.ort)}${st.geloest?' · <b style="color:var(--good)">gelöst</b>':""}</p>
+      ${f.kapitel.map((k,i)=>{const r=(st.kap||{})[i],words=k.absaetze.join(" ").split(/\s+/).length,e=ev.filter(x=>x.value.fall===f.nr&&x.value.kapitel===i+1).pop();
+        return `<details data-k="f-${f.id}-${i}" ${S.open["f-"+f.id+"-"+i]?"open":""}><summary><span><b>Kapitel ${i+1}: ${esc(k.titel)}</b><br><span class="small muted">${words} Wörter${r&&r.fertig?` · ${r.first} von ${k.fragen.length} auf Anhieb`:""}${e&&e.value.wpm?` · ${e.value.wpm} Wörter/Min.`:""}</span></span>${CHEV}</summary>
+          <div class="stack" style="padding-bottom:14px">${k.absaetze.map(p=>`<p class="text">${esc(p).replace(/\[\[(b\d+)\]\]([^.!?]*[.!?])/g,'<span class="mark">$2</span>').replace(/\[\[b\d+\]\]/g,"")}</p>`).join("")}
+          <h3>Fragen</h3>${k.fragen.map((q,qi)=>{const res=r&&r.typen&&r.typen[qi];return `<div class="item"><div class="q small"><span class="tiny muted">${esc(q.typ)}</span><br>${esc(q.frage)}${q.optionen?`<div>${q.optionen.map((o,oi)=>`<span class="opt ${(Array.isArray(q.richtig)?q.richtig.includes(oi):q.richtig===oi)?"right":""}">${esc(o)}</span>`).join("")}</div>`:q.beleg?`<div class="tiny muted">Lösung: der markierte Satz im Text.</div>`:""}</div>${res?`<span class="pill ${res[1]?"ok":"no"}">${res[1]?"✓":"✗"}</span>`:""}</div>`;}).join("")}</div></details>`;}).join("")}
+      </div></div>`;}).join("")+`<p class="note">Markiert: Beweis-Sätze, auf die eine Frage zeigt. ✓/✗: erster Durchgang.</p>`;
+}
+function cardHTML(k,sk){
+  const opt=(o,r)=>`<span class="opt ${r?"right":""}">${esc(o)}</span>`;
+  switch(k.typ){
+    case"mc":return esc(k.frage)+`<div>${k.optionen.map((o,i)=>opt(o,i===k.richtig)).join("")}</div>`;
+    case"tf":return esc(k.aussage)+` <span class="ans">${k.wahr?"stimmt":"stimmt nicht"}</span>`;
+    case"type":return esc(k.frage)+` <span class="ans">${esc(k.zeige||k.ok[0])}</span>`;
+    case"self":return esc(k.frage)+`<div class="tiny muted" style="margin-top:3px">Muster: ${esc(k.muster||"")}</div>`;
+    case"sort":return esc(k.frage)+`<div class="tiny">${k.toepfe.map((t,ti)=>`<b>${esc(t)}:</b> ${k.items.filter(x=>x[1]===ti).map(x=>esc(x[0])).join(", ")}`).join("<br>")}</div>`;
+    case"match":return esc(k.frage)+`<div class="tiny">${k.paare.map(p=>esc(p[0])+" → "+esc(p[1])).join("<br>")}</div>`;
+    case"order":return esc(k.frage)+`<div class="tiny">${k.schritte.map((s,i)=>(i+1)+". "+esc(s)).join("<br>")}</div>`;
+    case"multi":return esc(k.frage)+`<div>${k.optionen.map(o=>opt(o[0],o[1])).join("")}</div>`;
+    case"skelName":case"skelTap":case"skelType":{const b=sk&&sk[k.n];return `Skelett, Knochen Nr. ${k.n}${b?`: <span class="ans">${esc(b.name)}</span>`:""}`;}
+    case"zahn":return `Zahnart erkennen (${esc(k.t)})`;
+    case"pose":return `Körpersprache erkennen: <span class="ans">${esc(k.p)}</span>`;
+    default:return esc(k.frage||k.aussage||k.typ);
+  }
+}
+function aTests(){
+  if(!C.tests.length)return '<div class="empty" style="margin-top:14px">Noch keine Tests angelegt.</div>';
+  return C.tests.map(t=>{const T=C.testData[t.ordner],d=TT(t.ordner)||{},c=d.cards||{},stS=d.st||{};
+    if(!T)return `<div class="sec"><div class="empty">${esc(t.titel)}: Inhalte nicht ladbar.</div></div>`;
+    return `<div class="sec"><h2>${esc(t.fach)}: ${esc(t.titel)} <span class="small muted" style="font-weight:400">· ${esc(t.app||"")} · Test am ${dLabel(t.datum)}</span></h2><div class="card">
+      ${T.stationen.map((s,i)=>`<details data-k="t-${t.ordner}-${s.id}" ${S.open["t-"+t.ordner+"-"+s.id]?"open":""}><summary><span><b>Station ${i+1}: ${esc(s.name)}</b><br><span class="small muted">${s.karten.length} Karten${stS[s.id]?` · ${stS[s.id].runs} Runden`:""}</span></span>${CHEV}</summary>
+        <div class="stack" style="padding-bottom:12px">${(s.merk||[]).length?`<div class="small" style="background:var(--soft);border-radius:10px;padding:10px 12px">${s.merk.map(x=>`<p style="margin:3px 0">${x.replace(/<(?!\/?b>)[^>]*>/g,"")}</p>`).join("")}</div>`:""}
+        ${s.karten.map(k=>{const cs=c[k.id];return `<div class="item"><div class="q small">${cardHTML(k,T.skelett)}</div>${cs&&cs.seen?`<span class="pill ${cs.box>=2?"ok":cs.wrong?"no":""}">${cs.box>=2?"sicher":cs.box===1?"richtig":"wackelt"}</span>`:'<span class="pill">neu</span>'}</div>`;}).join("")}</div></details>`).join("")}</div></div>`;}).join("");
+}
+
+/* ---------- Ansicht: Entwicklung ---------- */
+function vEntwicklung(){
+  const lm=LM(),t=today();
+  const ranges=[[14,"2 Wochen"],[28,"4 Wochen"],[91,"3 Monate"],[0,"Alles"]];
+  let start=S.range?addDays(t,-S.range+1):null;
+  const allDays=[...Object.keys((lm&&lm.hist)||{}),...S.daily.map(d=>d.day),...S.log.map(e=>e.occurred_at.slice(0,10))].sort();
+  if(!start||(allDays[0]&&allDays[0]>start))start=allDays[0]||addDays(t,-13);
+  const X=[];for(let d=start;d<=t;d=addDays(d,1))X.push(d);
+  const XL=X.map(d=>dLabel(d));
+  let h=`<div class="chips" style="margin-top:6px">${ranges.map(([n,l])=>`<button class="chip ${S.range===n?"on":""}" data-range="${n}">${l}</button>`).join("")}</div>`;
+  if(lm){
+    const H=lm.hist||{};
+    const roll=k=>X.map(d=>{const s=histSum(H,addDays(d,-6),d)[k];return s[1]>=6?pct(s[0],s[1]):null;});
+    h+=`<div class="sec"><h2>Trefferquote</h2><div class="card"><p class="small muted">Anteil richtiger Antworten, gleitend über 7 Tage.</p>
+      ${lineChart({x:XL,ymin:0,ymax:100,ticks:[0,50,100],unit:" %",series:["m","e","d"].map(k=>({name:SUBJ[k],c:COL[k],v:roll(k)})),label:"Trefferquote je Fach"})}</div></div>`;
+    h+=`<div class="sec"><h2>Übungsmenge</h2><div class="card"><p class="small muted">Beantwortete Aufgaben pro Tag in Lern-Match.</p>
+      ${barChart({x:XL,series:["m","e","d"].map(k=>({name:SUBJ[k],c:COL[k],v:X.map(d=>(H[d]&&H[d][k])?H[d][k][1]:0)})),label:"Aufgaben pro Tag"})}${legend(["m","e","d"].map(k=>[SUBJ[k],COL[k]]))}</div></div>`;
+    /* Vokabeln: angefangen (exakt aus dem ersten Übungstag) und sicher (aus den Tagesständen) */
+    const en=lm.en||{},firsts=Object.values(en).map(s=>s.first).filter(Boolean);
+    const started=X.map(d=>firsts.filter(f=>f<=d).length);
+    const snapLM=S.daily.filter(r=>r.app==="lern-match");const snapBy={};snapLM.forEach(r=>snapBy[r.day]=r);
+    const secure=X.map(d=>{const r=snapBy[d];if(!r||!r.en)return null;return Object.values(r.en).filter(s=>(s.box||0)>=4).length;});
+    if(!secure[secure.length-1]&&lm.en)secure[secure.length-1]=Object.values(lm.en).filter(s=>(s.box||0)>=4).length;
+    h+=`<div class="sec"><h2>Englisch-Wortschatz</h2><div class="card">${lineChart({x:XL,series:[{name:"Begonnen",c:"color-mix(in srgb,var(--e) 45%,transparent)",v:started},{name:"Sicher",c:"var(--e)",v:secure}],label:"Vokabeln"})}
+      <p class="note">„Begonnen“ reicht zurück bis zum ersten Üben. „Sicher“ (Box 4–5) wird erst seit dem 7.11. täglich festgehalten – der Verlauf füllt sich ab jetzt Tag für Tag.</p></div></div>`;
+    /* Mathe-Stufen */
+    const lvl=X.map(d=>{const r=snapBy[d];const mm=r&&r.m;if(!mm)return null;const ks=Object.keys(mm).filter(k=>mm[k].n);return ks.length?Math.round(ks.reduce((a,k)=>a+mm[k].lvl,0)/ks.length*10)/10:null;});
+    if(lvl[lvl.length-1]==null&&lm.m){const ks=Object.keys(lm.m).filter(k=>lm.m[k].n);if(ks.length)lvl[lvl.length-1]=Math.round(ks.reduce((a,k)=>a+lm.m[k].lvl,0)/ks.length*10)/10;}
+    h+=`<div class="sec"><h2>Mathe-Stufen</h2><div class="card">${lineChart({x:XL,ymin:1,ymax:3,ticks:[1,2,3],dots:true,series:[{name:"Ø Stufe",c:"var(--m)",v:lvl}],label:"Durchschnittliche Mathe-Stufe"})}
+      <p class="note">Durchschnitt über alle geübten Rechenbereiche (1 bis 3). Wird seit dem 7.11. täglich festgehalten.</p></div></div>`;
+  }
+  /* Lesen */
+  const rv=readEvents();
+  if(rv.length){const pts=rv.filter(e=>e.value.wpm);
+    h+=`<div class="sec"><h2>Lesetempo</h2><div class="card">${pts.length?lineChart({x:pts.map(e=>dLabel(e.occurred_at.slice(0,10))),dots:true,series:[{name:"Tempo",c:"var(--r)",v:pts.map(e=>e.value.wpm)}],label:"Lesetempo je Kapitel"}):""}
+      <p class="note">Ein Punkt pro gelesenem Kapitel. Spätere Fälle haben längere Texte – ein leichter Rückgang beim Tempo ist dann normal.</p></div></div>`;}
+  /* Schreiben */
+  const tbe=S.log.filter(e=>e.app==="lern-match"&&e.kind==="tiebreak").slice().reverse();
+  if(tbe.length){
+    h+=`<div class="sec"><h2>Schreiben</h2><div class="card">
+      ${lineChart({x:tbe.map(e=>dLabel(e.occurred_at.slice(0,10))),dots:true,series:[{name:"Wörter",c:"var(--w)",v:tbe.map(e=>e.value.woerter||0)},{name:"Fehler",c:"var(--warn)",v:tbe.map(e=>e.value.fehler||0)}],label:"Tie-Break"})}
+      <p class="note">Ein Punkt pro Tie-Break. Gutes Zeichen: mehr Wörter bei gleich vielen oder weniger Fehlern – und mehr selbst gefundene Fehler.</p></div></div>`;}
+  /* Wochentabelle */
+  if(lm){const H=lm.hist||{},days=trainDays(),wk={};
+    Object.keys(days).concat(Object.keys(H)).forEach(d=>{if(d<start)return;const w=mondayOf(d);wk[w]=wk[w]||{days:new Set(),n:0,s:{m:[0,0],e:[0,0],d:[0,0]},slams:0};if(days[d])wk[w].days.add(d);});
+    Object.keys(H).forEach(d=>{const w=mondayOf(d);if(!wk[w])return;["m","e","d"].forEach(k=>{const v=H[d][k];if(v){wk[w].s[k][0]+=v[0];wk[w].s[k][1]+=v[1];wk[w].n+=v[1];}});});
+    Object.keys(lm.slams||{}).forEach(d=>{const w=mondayOf(d);if(wk[w])wk[w].slams++;});
+    const rows=Object.keys(wk).sort().reverse();const cell=s=>s[1]?pct(s[0],s[1])+" %":"–";
+    h+=`<div class="sec"><h2>Wochen im Vergleich</h2><div class="card tscroll"><table class="t"><thead><tr><th>Woche ab</th><th>Tage</th><th>Aufgaben</th><th>Mathe</th><th>Englisch</th><th>Deutsch</th><th>Slams</th></tr></thead><tbody>
+      ${rows.map(w=>`<tr><td>${dLabel(w,{day:"numeric",month:"short"})}</td><td>${wk[w].days.size}</td><td>${wk[w].n}</td><td>${cell(wk[w].s.m)}</td><td>${cell(wk[w].s.e)}</td><td>${cell(wk[w].s.d)}</td><td>${wk[w].slams||""}</td></tr>`).join("")}</tbody></table></div></div>`;}
+  return h;
+}
+
+/* ---------- Gerüst ---------- */
+function header(){
+  const tm=S.loaded?S.loaded.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):"";
+  const lastSync=Object.values(S.P).map(r=>r.updated_at).sort().pop();
+  const ago=lastSync?new Date(lastSync).toLocaleString("de-DE",{weekday:"short",day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):null;
+  return `<header class="top"><div class="row1"><div><div class="kicker">Eltern-Cockpit</div><h1>${esc(S.kid.display_name)}</h1></div>
+    <button class="btn ghost" data-act="reload" aria-label="Neu laden">↻ ${tm}</button></div>
+    ${S.kids.length>1?`<div class="chips" style="margin-top:10px">${S.kids.map(k=>`<button class="chip ${k.id===S.kid.id?"on":""}" data-kid="${k.id}">${esc(k.display_name)}</button>`).join("")}</div>`:""}
+    ${ago?`<p class="small muted" style="margin-top:4px">Zuletzt geübt und abgeglichen: ${ago} Uhr</p>`:""}</header>`;
+}
+function render(){
+  const app=$("#app"),tabs=$("#tabs");
+  if(!FS.session()){tabs.hidden=true;app.innerHTML=vLogin();return;}
+  if(S.err&&!S.kid){tabs.hidden=true;app.innerHTML=`<div class="login card stack"><h2>Eltern-Cockpit</h2><p class="err">${esc(S.err)}</p><button class="btn" data-act="reload">Nochmal versuchen</button><button class="btn ghost" data-act="out">Abmelden</button></div>`;return;}
+  if(!S.kid){tabs.hidden=true;app.innerHTML=`<p class="muted" style="margin-top:30vh;text-align:center"><span class="spin"></span></p>`;return;}
+  tabs.hidden=false;tabs.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
+  const v={heute:vHeute,aufgaben:vAufgaben,entwicklung:vEntwicklung}[S.tab]||vHeute;
+  app.innerHTML=header()+(S.err?`<p class="err" style="margin:6px 0">${esc(S.err)}</p>`:"")+v()+`<p class="tiny muted" style="text-align:center;margin-top:28px">Angemeldet als ${esc((FS.member()||{}).display_name||"")} · <button data-act="out" style="background:none;border:0;padding:0;text-decoration:underline;color:inherit;font-size:inherit;cursor:pointer">Abmelden</button></p>`;
+}
+function vLogin(){
+  return `<div class="login stack"><div><div class="kicker">Familienspeicher</div><h1>Eltern-Cockpit</h1></div>
+    <p class="muted small">Lernstände, Aufgaben und Entwicklung aus Lern-Match, Spürnase und dem Testtrainer. Nur für Eltern.</p>
+    <form id="login" class="stack"><input class="inp" id="mail" type="email" autocomplete="username" placeholder="E-Mail" value="${esc(S.mail||"")}" required>
+    <input class="inp" id="pw" type="password" autocomplete="current-password" placeholder="Passwort" required>
+    <button class="btn" type="submit" ${S.busy?"disabled":""}>${S.busy?"Melde an …":"Anmelden"}</button></form>
+    ${S.loginErr?`<p class="err">${esc(S.loginErr)}</p>`:""}
+    <p class="tiny muted">Wer in einer der Apps schon angemeldet ist, ist es hier automatisch auch.</p></div>`;
+}
+async function boot(){
+  S.err=null;
+  if(!FS.session()){render();return;}
+  render();
+  try{
+    const m=FS.member()||await FS.loadMember();
+    if(!m){S.err="Dieses Konto gehört noch zu keiner Familie.";render();return;}
+    if(m.role!=="parent"){S.err="Das Cockpit ist für Eltern gedacht. Mit diesem Konto ("+m.display_name+") geht es nicht.";render();return;}
+    if(!C.lm)await loadContent();
+    const all=await FS.familyMembers();S.kids=(all||[]).filter(x=>x.role==="child");
+    if(!S.kids.length){S.err="In der Familie ist noch kein Kind angelegt.";render();return;}
+    const keep=S.kid&&S.kids.find(k=>k.id===S.kid.id);S.kid=keep||S.kids[0];
+    await loadKid();
+  }catch(e){S.err=navigator.onLine===false||e instanceof TypeError?"Gerade kein Internet.":"Laden fehlgeschlagen: "+e.message;}
+  render();
+}
+
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button,[data-tab],summary");if(!b)return;
+  if(b.matches("summary")){const d=b.parentElement;if(d.dataset.k)setTimeout(()=>{S.open[d.dataset.k]=d.open;},0);return;}
+  const tab=b.dataset.tab,sub=b.dataset.sub,go=b.dataset.go;
+  if(tab){S.tab=tab;try{localStorage.setItem("cockpit-tab",tab);}catch(x){}render();scrollTo(0,0);return;}
+  if(sub||go){S.sub=sub||go;S.tab="aufgaben";try{localStorage.setItem("cockpit-sub",S.sub);localStorage.setItem("cockpit-tab","aufgaben");}catch(x){}render();if(go)scrollTo(0,0);return;}
+  if(b.dataset.range!=null){S.range=+b.dataset.range;render();return;}
+  if(b.dataset.toggle){S.open[b.dataset.toggle]=!S.open[b.dataset.toggle];render();return;}
+  if(b.dataset.kid){S.kid=S.kids.find(k=>k.id===b.dataset.kid);S.P={};S.log=[];S.daily=[];render();boot();return;}
+  if(b.dataset.act==="reload"){boot();return;}
+  if(b.dataset.act==="out"){await FS.signOut();S.kid=null;S.kids=[];S.P={};S.err=null;render();}
+});
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="login")return;e.preventDefault();
+  S.mail=$("#mail").value;const pw=$("#pw").value;S.busy=true;S.loginErr=null;render();
+  FS.signIn(S.mail,pw).then(()=>{S.busy=false;boot();}).catch(err=>{S.busy=false;S.loginErr=err.message;render();});
+});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&S.loaded&&Date.now()-S.loaded>5*60e3)boot();});
+boot();
+})();
+</script>
+</body>
+</html>
