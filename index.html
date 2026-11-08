@@ -258,23 +258,114 @@ function streak(days){let d=today();if(!days[d])d=addDays(d,-1);let n=0;while(da
 const vocabState=id=>((LM()||{}).en||{})[id];
 function vocabBuckets(en){const b={neu:0,wack:0,lern:0,sicher:0};IDX.words.forEach(w=>{const s=en&&en[w.id];if(!s)b.neu++;else if((s.box||0)<=1)b.wack++;else if(s.box<=3)b.lern++;else b.sicher++;});return b;}
 
-function hints(){
-  const lm=LM(),H=[];if(!lm)return H;
-  const m=lm.m||{};
-  const weakM=Object.keys(m).filter(k=>m[k].n>=5&&m[k].ok/m[k].n<.5).sort((a,b)=>m[a].ok/m[a].n-m[b].ok/m[b].n);
-  if(weakM.length)H.push({t:"look",ic:"🔍",h:`Mathe: ${weakM.length===1?"ein Bereich":weakM.length+" Bereiche"} unter 50 %`,p:weakM.map(k=>{const s=m[k];return `<b>${esc(SKILLS[k]||k)}</b>: ${s.ok} von ${s.n} richtig, Stufe ${s.lvl}${s.run<=-2?' <span style="color:var(--warn)">· zuletzt '+(-s.run)+'× falsch in Folge</span>':s.run>=2?' <span style="color:var(--good)">· zuletzt '+s.run+'× richtig in Folge</span>':""}`;}).join("<br>")+"<br>Vielleicht einmal gemeinsam eine Aufgabe rechnen.",go:"mathe"});
-  const hard=IDX.words.filter(w=>{const s=vocabState(w.id);return s&&(s.miss||0)>=3;}).sort((a,b)=>vocabState(b.id).miss-vocabState(a.id).miss);
-  if(hard.length)H.push({t:"look",ic:"🔤",h:`${hard.length===1?"Ein Englischwort hakt":hard.length+" Englischwörter haken"}`,p:hard.slice(0,6).map(w=>`<b>${esc(w.en[0])}</b> (${esc(w.de)})`).join(", "),go:"englisch"});
-  const de=lm.de||{};const weakDe=IDX.de.filter(d=>{const s=de[d.id];return s&&s.n>=3&&s.ok/s.n<.5;});
-  if(weakDe.length)H.push({t:"look",ic:"✏️",h:"Deutsch: mehrfach daneben",p:weakDe.sort((a,b)=>(de[a.id].last===false?0:1)-(de[b.id].last===false?0:1)).slice(0,5).map(d=>{const q=d.q.length>40?d.q.slice(0,40)+"…":d.q,qq=/^[„"]/.test(q)?esc(q):"„"+esc(q)+"“";return `${esc(DE_CAT[d.cat]||d.cat)}: ${qq} (${de[d.id].ok} von ${de[d.id].n})${de[d.id].last===false?' <span style="color:var(--warn)">· zuletzt falsch</span>':' <span style="color:var(--good)">· zuletzt richtig</span>'}`;}).join("<br>"),go:"deutsch"});
-  const egW=IDX.eg.filter(g=>((lm.eg||{})[g.id]||{}).last===false);
-  if(egW.length>=3)H.push({t:"look",ic:"🇬🇧",h:`Grammatik: ${egW.length} Sätze zuletzt falsch`,p:egW.slice(0,3).map(g=>"„"+esc(g.s)+"“").join(", "),go:"grammatik"});
-  const top=Object.keys(m).filter(k=>m[k].lvl===3&&m[k].n>=6&&m[k].ok/m[k].n>=.7);
-  if(top.length)H.push({t:"good",ic:"⭐",h:`Mathe auf höchster Stufe: ${top.length} ${top.length===1?"Bereich":"Bereiche"}`,p:top.map(k=>SKILLS[k]).join(", ")});
-  const sicher=vocabBuckets(lm.en).sicher;if(sicher)H.push({t:"good",ic:"🧠",h:`${sicher} Vokabeln sitzen fest`,p:"Box 4 oder 5 – sie kommen nur noch selten zur Wiederholung."});
-  return H;
+/* ---------- Fehler und Einschätzung ---------- */
+const TYP={
+  "genau-statt-gerundet":"Genau gerechnet statt gerundet","nur-eine-gerundet":"Nur eine Zahl gerundet",
+  "klammer-uebersehen":"Klammer übersehen, von links nach rechts gerechnet","nur-klammer":"Nur die Klammer ausgerechnet und dann aufgehört",
+  "punkt-vor-strich":"Punkt vor Strich nicht beachtet","uebertrag":"Übertrag vergessen","entbuendeln":"Beim Minus Entbündeln vergessen",
+  "rechenzeichen":"Rechenzeichen verwechselt","zehner":"Um 10 daneben (Zehnerübergang)","knapp":"Um 1 verrechnet","reihe":"Einmaleins-Reihe verrutscht",
+  "verdoppelt":"Verdoppelt, obwohl der Selbstlaut lang ist","nicht-verdoppelt":"Verdopplung vergessen nach kurzem Selbstlaut",
+  "ie-statt-i":"ie geschrieben, obwohl das i kurz ist","i-statt-ie":"nur i geschrieben, obwohl das i lang ist",
+  "ck-statt-k":"ck, obwohl nur k hingehört","k-statt-ck":"k statt ck nach kurzem Selbstlaut","tz-statt-z":"tz, obwohl nur z hingehört","z-statt-tz":"z statt tz nach kurzem Selbstlaut",
+  "schreibweise":"Wort gewusst, ein Buchstabe falsch","fast":"Ähnlich, aber mehrere Buchstaben falsch","verwechselt":"Mit einem anderen Wort verwechselt","leer":"Keine Antwort"};
+const TIPS={
+  ueberschlag:"Vor dem Rechnen laut sagen lassen, was die Aufgabe will. Erst beide Zahlen auf Zehner runden und aufschreiben, dann rechnen.",
+  klammer:"Einmal gemeinsam an einem Beispiel zeigen: Klammer zuerst ausrechnen, das Ergebnis darüber schreiben, dann mit dem Rest weiterrechnen.",
+  mauer:"Mit Bausteinen oder auf Papier zeigen: Zwei Steine nebeneinander ergeben zusammen den Stein darüber. Reihe für Reihe von unten nach oben.",
+  schriftlich:"Mit Zettel rechnen und die kleine 1 (Übertrag) aufschreiben lassen. Von rechts nach links, Stelle für Stelle.",
+  schriftmal:"Mit Zettel rechnen und die Überträge klein aufschreiben.",
+  luecke:"Mit der Umkehraufgabe: 35 + ? = 52 wird zu 52 − 35.",
+  probe:"Umkehraufgabe rechnen: Ergebnis plus abgezogene Zahl muss wieder die erste Zahl ergeben.",
+  plus:"Kurze Kopfrechen-Runden im Alltag, zum Beispiel beim Einkaufen oder im Auto.",minus:"Kurze Kopfrechen-Runden im Alltag, zum Beispiel beim Einkaufen oder im Auto.",
+  mal:"Schwierige Einmaleins-Reihen (6, 7, 8) laut aufsagen lassen.",geteilt:"Geteilt immer über das Einmaleins: 56 : 8 – welche Zahl mal 8 ergibt 56?",
+  text:"Aufgabe laut vorlesen lassen und fragen: Was ist gefragt? Was weiß ich schon?",worte:"Fachwörter wie Summe, Differenz, vermindern auf einen Zettel schreiben und die Bedeutung dazu.",
+  begriffe:"Fachwörter (Summand, Summe, Minuend, Subtrahend, Differenz) auf ein Kärtchen schreiben.",geschickt:"Zahlen suchen, die zusammen 10 oder 100 ergeben.",
+  groessen:"Umrechnungen an echten Dingen zeigen: Zollstock, Küchenwaage, Uhr.",zeit:"Auf einer echten Uhr zählen: erst bis zur vollen Stunde, dann weiter.",gtext:"Aufgabe laut vorlesen lassen und fragen: Was ist gefragt?"};
+const DE_TIPS={
+  doppel:"Das Wort langsam sprechen und auf den Selbstlaut hören. Kurz und betont (Puppe, Sonne, immer) → doppelter Mitlaut. Lang (Tafel, Hose, Name) → nur einer. Klatschen hilft.",
+  i:"Das i hören: Lang gesprochen (Biene, Tier, Brief) → meist ie. Kurz gesprochen (Wind, Kind, Tisch) → nur i. Das Wort übertrieben langsam sprechen.",
+  s:"Kurzer Selbstlaut → ss (Kuss, Wasser). Langer Selbstlaut oder ei/au → ß (Fuß, heiß). Summendes s → verlängern (Haus → Häuser).",
+  ck:"Nach kurzem Selbstlaut ck (Rock, Decke). Nach langem Selbstlaut oder l, n, r nur k (Haken, Bank).",
+  tz:"Nach kurzem Selbstlaut tz (Katze, Platz). Nach l, n, r nur z (Kerze, Pilz).",
+  gross:"Probe: Passt der, die oder das davor? Dann groß. Und der Satzanfang ist immer groß.",
+  wortart:"Nomen: der/die/das passt davor. Verb: ich …, du … Adjektiv: Wie ist etwas?",
+  _:"Die falschen Aufgaben unter „Aufgaben → Deutsch“ gemeinsam anschauen."};
+const SN_TYP={fakt:"Fakten im Text finden",wort:"Wörter aus dem Zusammenhang verstehen",beweis:"Belegstellen im Text finden",schluss:"Schlüsse ziehen",reihe:"Reihenfolge der Ereignisse"};
+const ERR=()=>S.log.filter(e=>e.kind==="fehler"&&e.value);
+const countBy=(a,f)=>a.reduce((o,x)=>{const k=f(x);if(k!=null)o[k]=(o[k]||0)+1;return o;},{});
+const q=x=>"„"+esc(x)+"“";
+const nf=x=>typeof x==="number"?x.toLocaleString("de-DE"):String(x==null?"":x);
+/* Bei Lückenwörtern mit zwei Möglichkeiten steht fest, was falsch gewählt wurde – auch für die Zeit, bevor mitgeschrieben wurde. */
+function gapDir(cat,chosen,right){
+  if(cat==="doppel")return chosen.length>right.length?"verdoppelt":"nicht-verdoppelt";
+  if(cat==="i"||cat==="ck"||cat==="tz")return chosen+"-statt-"+right;
+  return null;}
+function gapWrong(d,st){
+  if(!st||st.n<=st.ok||!d.o||d.o.length!==2||!d.o.includes(d.a))return null;
+  const other=d.o.find(x=>x!==d.a),i=d.q.indexOf(d.a);
+  return {n:st.n-st.ok,word:d.q.slice(0,i)+other+d.q.slice(i+d.a.length),typ:gapDir(d.cat,other,d.a)};}
+const dbl=x=>{let n=0;const t=String(x).toLowerCase();for(let i=0;i+1<t.length;i++)if(t[i]===t[i+1]&&/[bcdfgklmnprstz]/.test(t[i]))n++;return n;};
+function tbErrors(lm){
+  const out=[],tb=lm.tb||{},E=tb.entries||[];
+  E.forEach(e=>(e.f||[]).forEach(x=>out.push({w:x.w,c:x.c,k:x.k,d:e.d})));
+  const r=lm.tbRun;if(r&&r.errs&&!E.some(e=>e.d===r.d))r.errs.forEach(x=>out.push({w:x.wrong,c:x.correct,k:x.category,d:r.d}));
+  return out;}
+function assess(){
+  const lm=LM(),sn=SN(),A={now:[],watch:[],good:[]};if(!lm&&!sn)return A;
+  const E=ERR(),name=esc(S.kid.display_name);
+  if(lm){
+    /* Mathe */
+    const m=lm.m||{},strong=[];
+    Object.keys(m).forEach(k=>{const s=m[k];if(!s||s.n<3)return;const acc=s.ok/s.n;
+      const errs=E.filter(e=>e.value.f==="m"&&e.value.b===k),typs=Object.entries(countBy(errs,e=>e.value.typ)).sort((a,b)=>b[1]-a[1]);
+      const pat=typs.length&&typs[0][1]>=2?`<br>Typischer Fehler: <b>${esc(TYP[typs[0][0]]||typs[0][0])}</b> (${typs[0][1]} von ${errs.length} mitgeschriebenen Fehlern)`:"";
+      const ex=errs[0]?`<br>Zuletzt: ${esc(String(errs[0].value.aufgabe).replace(/ = \?$/,""))} → ${q(nf(errs[0].value.eingabe))} statt ${q(nf(errs[0].value.richtig))}`:"";
+      if(s.ok===0)A.now.push({ic:"🧩",h:`${SKILLS[k]||k}: noch keine Aufgabe richtig`,p:`0 von ${s.n} richtig, Stufe ${s.lvl}. Wenn gar nichts klappt, ist das Thema meist noch nicht verstanden – kein Flüchtigkeitsfehler.${pat}${ex}`,tip:TIPS[k],go:"mathe"});
+      else if(s.n>=5&&acc<.5)(acc<.4||(typs.length&&typs[0][1]>=2)?A.now:A.watch).push({ic:"🔍",h:`${SKILLS[k]||k}: ${s.ok} von ${s.n} richtig`,p:`Stufe ${s.lvl} von 3${s.run<=-2?`, die letzten ${-s.run} Antworten falsch`:""}.${pat}${ex}`,tip:TIPS[k],go:"mathe"});
+      else if(s.lvl===3&&s.n>=6&&acc>=.7)strong.push(k);});
+    if(strong.length)A.good.push({ic:"⭐",h:`Mathe auf höchster Stufe`,p:strong.map(k=>`${esc(SKILLS[k])} (${m[k].ok} von ${m[k].n})`).join(", ")});
+    /* Deutsch: Übungen, mitgeschriebene Fehler und freies Schreiben zusammen */
+    const de=lm.de||{},grp={};
+    const add=(cat,src,typ,word,n)=>{const g=grp[cat]||(grp[cat]={n:0,src:{},typ:{},ex:{}});g.n+=n;g.src[src]=(g.src[src]||0)+n;if(typ)g.typ[typ]=(g.typ[typ]||0)+n;if(word)g.ex[word]=(g.ex[word]||0)+n;};
+    const loggedIds=new Set(E.filter(e=>e.value.f==="d").map(e=>e.value.id));
+    IDX.de.forEach(d=>{const st=de[d.id];if(!st||st.n<=st.ok)return;const gw=gapWrong(d,st);
+      if(gw)add(d.cat,"uebung",gw.typ,`${q(gw.word)} statt ${q(d.q)}`,gw.n);
+      else if(!loggedIds.has(d.id)){const t=d.q.length>34?d.q.slice(0,34)+"…":d.q;add(d.cat,"uebung",null,`${/^[„"]/.test(t)?esc(t):q(t)} (${st.ok} von ${st.n} richtig)`,st.n-st.ok);}});
+    E.filter(e=>e.value.f==="d").forEach(e=>{const v=e.value,d=IDX.de.find(x=>x.id===v.id);if(d&&gapWrong(d,de[d.id]))return;add(v.b,"uebung",v.typ,`${q(v.eingabe)} statt ${q(v.richtig)}`,1);});
+    tbErrors(lm).forEach(x=>{const k=x.k==="sonst"?null:x.k;if(!k)return;const typ=k==="doppel"?(dbl(x.c)>dbl(x.w)?"nicht-verdoppelt":dbl(x.c)<dbl(x.w)?"verdoppelt":null):null;add(k,"schreiben",typ,`${q(x.w)} statt ${q(x.c)}`,1);});
+    Object.entries(grp).sort((a,b)=>b[1].n-a[1].n).forEach(([cat,g])=>{if(g.n<3)return;
+      const both=g.src.uebung&&g.src.schreiben,ex=Object.entries(g.ex).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([w,n])=>(n>1?n+"× ":"")+w).join(", ");
+      const ty=Object.entries(g.typ).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`${esc(TYP[t]||t)}: ${n}×`).join(" · ");
+      const where=both?"in den Übungen und beim freien Schreiben":g.src.schreiben?"beim freien Schreiben":"in den Übungen";
+      (both||g.n>=5?A.now:A.watch).push({ic:"✏️",h:`${DE_CAT[cat]||TB_CAT[cat]||cat}: ${g.n} Fehler ${where}`,
+        p:`${ty?ty+"<br>":""}${ex?"Beispiele: "+ex:""}${both?"<br>Taucht in beiden Bereichen auf – das ist ein echtes Muster, kein Zufall.":""}`,tip:DE_TIPS[cat]||DE_TIPS._,go:"deutsch"});});
+    /* Englisch */
+    const en=lm.en||{},hard=IDX.words.filter(w=>(en[w.id]||{}).miss>=3).sort((a,b)=>en[b.id].miss-en[a.id].miss);
+    if(hard.length)A.watch.push({ic:"🔤",h:`Englisch: ${hard.length===1?"ein Wort hakt":hard.length+" Wörter haken"}`,p:hard.slice(0,6).map(w=>`<b>${esc(w.en[0])}</b> (${esc(w.de)}, ${en[w.id].miss}× vergessen)`).join(", "),tip:"Diese Wörter auf Kärtchen schreiben oder im Alltag auf Englisch benutzen.",go:"englisch"});
+    const sp=E.filter(e=>e.value.f==="e"&&e.value.typ==="schreibweise");
+    if(sp.length>=3)A.watch.push({ic:"🔡",h:"Englisch: Wörter gewusst, Schreibweise wackelt",p:sp.slice(0,5).map(e=>`${q(e.value.eingabe)} statt ${q(e.value.richtig)}`).join(", "),tip:"Wörter einmal abschreiben und laut buchstabieren lassen.",go:"englisch"});
+    const egW=IDX.eg.filter(g=>((lm.eg||{})[g.id]||{}).last===false);
+    if(egW.length>=3)A.watch.push({ic:"💬",h:`Englische Grammatik: ${egW.length} Sätze zuletzt falsch`,p:egW.slice(0,3).map(g=>q(g.s.replace("___",g.o[g.a]))).join(", "),tip:"Die Sätze laut vorlesen – oft hört man, was richtig klingt.",go:"grammatik"});
+    const sicher=vocabBuckets(en).sicher;if(sicher>=8)A.good.push({ic:"🧠",h:`${sicher} Englisch-Vokabeln sitzen fest`,p:"Box 4 oder 5 – sie kommen nur noch selten zur Wiederholung."});
+    /* Trends */
+    const t=today(),cur=histSum(lm.hist,addDays(t,-6),t),prev=histSum(lm.hist,addDays(t,-13),addDays(t,-7));
+    ["m","e","d"].forEach(k=>{if(cur[k][1]<15||prev[k][1]<15)return;const a=pct(cur[k][0],cur[k][1]),b=pct(prev[k][0],prev[k][1]);
+      if(b-a>=10)A.watch.push({ic:"📉",h:`${SUBJ[k]}: ${b-a} Punkte unter der Vorwoche`,p:`${a} % statt ${b} % richtig. Das passiert oft, wenn neuer Stoff dazukommt – in ein, zwei Wochen noch einmal anschauen.`});
+      else if(a-b>=5)A.good.push({ic:"📈",h:`${SUBJ[k]}: ${a-b} Punkte besser als in der Vorwoche`,p:`${a} % statt ${b} % richtig.`});});
+    /* Schreiben: selbst gefundene Fehler */
+    const D=(lm.tb||{}).days||{},f=Object.values(D).reduce((a,x)=>a+(x.f||0),0),self=Object.values(D).reduce((a,x)=>a+(x.s||0),0);
+    if(f>=4&&self/f>=.5)A.good.push({ic:"🕵️",h:"Findet eigene Fehler",p:`Im Tie-Break ${self} von ${f} Fehlern ohne Tipp selbst entdeckt.`});
+  }
+  /* Dranbleiben */
+  const days=trainDays();let n7=0;for(let i=0;i<7;i++)if(days[addDays(today(),-i)])n7++;
+  if(n7>=5)A.good.push({ic:"🎾",h:`Dranbleiben: an ${n7} von 7 Tagen geübt`,p:"Regelmäßigkeit ist wichtiger als lange Einheiten."});
+  /* Lesen: Fragetypen */
+  if(sn){const T={};Object.values(sn.faelle||{}).forEach(f=>Object.values(f.kap||{}).forEach(r=>(r.typen||[]).forEach(([ty,ok])=>{T[ty]=T[ty]||[0,0];T[ty][1]++;if(ok)T[ty][0]++;})));
+    Object.entries(T).forEach(([ty,[ok,n]])=>{if(n<4)return;const a=ok/n;
+      if(a>=.85)A.good.push({ic:"🔎",h:`Lesen: ${SN_TYP[ty]||ty}`,p:`${ok} von ${n} Fragen auf Anhieb richtig.`});
+      else if(a<.6)A.watch.push({ic:"📖",h:`Lesen: ${SN_TYP[ty]||ty}`,p:`${ok} von ${n} Fragen auf Anhieb richtig.`,tip:ty==="beweis"?"Beim Vorlesen fragen: Wo steht das im Text? Mit dem Finger zeigen lassen.":"Nach dem Lesen kurz nacherzählen lassen.",go:"lesen"});});}
+  return A;
 }
-
 /* ---------- Diagramme (SVG, ohne Bibliothek) ---------- */
 function nice(v){const p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p;}
 function lineChart(o){
@@ -322,7 +413,7 @@ function vHeute(){
     return `<div class="tile"><div class="lbl"><span class="dot" style="background:${COL[k]}"></span>${SUBJ[k]}</div>
       <div class="big">${a==null?"–":a+"<small style='font-size:.55em;font-weight:600'> %</small>"}</div>
       <div class="sub">${cur[k][1]} Aufgaben</div><div class="sub">${dl||"&nbsp;"}</div></div>`;};
-  const H=hints();
+  const H=assess();
   let h=`<div class="sec"><div class="card">
      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2>Trainingstage</h2><span class="small muted">${n7} von 7 Tagen${st>1?` · Serie ${st} Tage`:""}</span></div>
      <div class="days">${last14.map(d=>`<div class="d ${days[d]?"on":""} ${slams[d]?"slam":""} ${d===t?"today":""}" title="${dLabel(d,{weekday:"short",day:"numeric",month:"numeric"})}${slams[d]?" · Grand Slam":""}">${new Date(d+"T12:00:00").getDate()}</div>`).join("")}</div>
@@ -330,7 +421,13 @@ function vHeute(){
      ${lm?`<p class="note">Gold umrandet: Grand-Slam-Tag. Pokale bisher: ${["ao","fo","wi","us"].map(k=>({ao:"Melbourne",fo:"Paris",wi:"London",us:"New York"})[k]+" "+((lm.titles||{})[k]||0)).join(" · ")}</p>`:""}
    </div></div>`;
   if(lm)h+=`<div class="sec"><h2>Letzte 7 Tage <span class="small muted" style="font-weight:400">· Anteil richtig, zur Vorwoche</span></h2><div class="grid3">${tile("m")}${tile("e")}${tile("d")}</div></div>`;
-  if(H.length)h+=`<div class="sec"><h2>Worauf ihr schauen könnt</h2><div class="card">${H.map(x=>`<div class="hint ${x.t}"><div class="ic">${x.ic}</div><div class="stack-s" style="min-width:0;flex:1"><p><b>${esc(x.h)}</b></p><p class="small muted">${x.p}</p>${x.go?`<button class="btn ghost" style="margin-top:6px" data-go="${x.go}">Aufgaben ansehen</button>`:""}</div></div>`).join("")}</div></div>`;
+  const item=x=>`<div class="hint ${x.cls}"><div class="ic">${x.ic}</div><div class="stack-s" style="min-width:0;flex:1"><p><b>${esc(x.h)}</b></p><p class="small muted">${x.p}</p>${x.tip?`<p class="small"><span class="tiny" style="font-weight:700;color:var(--court)">WAS IHR TUN KÖNNT</span><br>${esc(x.tip)}</p>`:""}${x.go?`<button class="btn ghost" style="margin-top:4px" data-go="${x.go}">Aufgaben ansehen</button>`:""}</div></div>`;
+  const grp=(t,list,cls,sub)=>list.length?`<div class="card"><h3 style="margin-bottom:2px">${t}</h3><p class="tiny muted" style="margin-bottom:6px">${sub}</p>${list.map(x=>item(Object.assign({cls},x))).join("")}</div>`:"";
+  if(H.now.length||H.watch.length||H.good.length)h+=`<div class="sec"><h2>Einschätzung</h2>
+    ${grp("Jetzt angehen",H.now,"look","Hier lohnt sich gemeinsames Üben oder ein kurzes Erklären.")}
+    ${grp("Im Blick behalten",H.watch,"look","Noch kein Grund zur Sorge – in ein, zwei Wochen wieder anschauen.")}
+    ${grp("Stärken",H.good,"good","Das läuft – gern auch einmal loben.")}
+    <p class="note">Automatische Auswertung der Lerndaten, keine Diagnose. Seit dem 8.11. schreibt Lern-Match jede falsche Antwort mit – die Muster werden dadurch von Woche zu Woche genauer.</p></div>`;
   if(lm)h+=secMathe(lm)+secEnglisch(lm)+secDeutsch(lm)+secSchreiben(lm);
   h+=secLesen(sn)+secTests();
   return h;
@@ -410,14 +507,25 @@ function vAufgaben(){
   const body={mathe:aMathe,englisch:aEnglisch,grammatik:aGrammatik,deutsch:aDeutsch,schreiben:aSchreiben,lesen:aLesen,tests:aTests}[S.sub]||aMathe;
   return `<div class="chips" style="margin-top:6px">${SUBS.map(([k,n])=>`<button class="chip ${S.sub===k?"on":""}" data-sub="${k}">${n}</button>`).join("")}</div>${body()}`;
 }
-const status=s=>!s?'<span class="pill">neu</span>':s.last===false?`<span class="pill no">${s.ok}/${s.n}</span>`:`<span class="pill ok">${s.ok}/${s.n}</span>`;
+const status=s=>!s?'<span class="pill">neu</span>':`<span class="pill ${s.last===false?"no":"ok"}" title="${s.n} Versuche, ${s.ok} richtig, letzter Versuch ${s.last===false?"falsch":"richtig"}">${s.last===false?"✗":"✓"} ${s.ok}/${s.n}</span>`;
+const LEGEND=`<div class="sec"><div class="card small"><b>So liest du die Kästchen</b> <span class="tiny muted">· Aufgaben mit Fehlern stehen oben</span><p class="muted" style="margin-top:4px"><span class="pill ok">✓ 1/3</span> 3 Versuche, davon 1 richtig – der letzte Versuch war richtig (✓).<br><span class="pill no">✗ 0/1</span> zuletzt falsch. Diese Aufgaben kommen bevorzugt wieder dran.<br>Darunter in Rot: was stattdessen gewählt oder geschrieben wurde.</p></div></div>`;
+function wrongLine(id,d,st){
+  const parts=[],gw=d&&gapWrong(d,st);
+  if(gw)parts.push(`${gw.n}× ${q(gw.word)}${gw.typ&&TYP[gw.typ]?` <span class="muted">· ${esc(TYP[gw.typ])}</span>`:""}`);
+  else{const c=countBy(ERR().filter(e=>e.value.id===id),e=>e.value.eingabe);Object.entries(c).sort((a,b)=>b[1]-a[1]).forEach(([w,n])=>parts.push((n>1?n+"× ":"")+q(w)));}
+  return parts.length?`<div class="tiny" style="color:var(--warn);margin-top:2px">Falsch: ${parts.join(", ")}</div>`:"";}
 function aMathe(){
   const lm=LM()||{},m=lm.m||{},mk=lm.mk||2;
-  const block=k=>{const s=m[k],L=LEVELS[k]||[],cur=s?s.lvl:0;
-    return `<details ${S.open["m-"+k]?"open":""} data-k="m-${k}"><summary><span><b>${esc(SKILLS[k])}</b><br><span class="small muted">${s?`Stufe ${s.lvl} · ${s.ok} von ${s.n} richtig`:"noch nicht geübt"}</span></span>${CHEV}</summary>
-      <table class="lvltab">${L.map((l,i)=>`<tr class="${cur===i+1?"cur":""}"><td>Stufe ${i+1}${cur===i+1?" ◂":""}</td><td>${esc(l[0])}${l[1]&&l[1]!=="—"?`<br><span class="ex">${esc(l[1])}</span>`:""}</td></tr>`).join("")}</table><div style="height:10px"></div></details>`;};
+  const E=ERR().filter(e=>e.value.f==="m");
+  const block=k=>{const s=m[k],L=LEVELS[k]||[],cur=s?s.lvl:0,errs=E.filter(e=>e.value.b===k);
+    const typs=Object.entries(countBy(errs,e=>e.value.typ)).sort((a,b)=>b[1]-a[1]);
+    return `<details ${S.open["m-"+k]?"open":""} data-k="m-${k}"><summary><span><b>${esc(SKILLS[k])}</b><br><span class="small muted">${s?`Stufe ${s.lvl} · ${s.ok} von ${s.n} richtig`:"noch nicht geübt"}${errs.length?` · <span style="color:var(--warn)">${errs.length} Fehler</span>`:""}</span></span>${CHEV}</summary>
+      <table class="lvltab">${L.map((l,i)=>`<tr class="${cur===i+1?"cur":""}"><td>Stufe ${i+1}${cur===i+1?" ◂":""}</td><td>${esc(l[0])}${l[1]&&l[1]!=="—"?`<br><span class="ex">${esc(l[1])}</span>`:""}</td></tr>`).join("")}</table>
+      ${errs.length?`<h3 style="margin:12px 0 2px">Falsche Antworten</h3>${typs.length?`<p class="tiny muted">${typs.map(([t,n])=>`${esc(TYP[t]||t)}: ${n}×`).join(" · ")}</p>`:""}
+        ${errs.slice(0,8).map(e=>{const v=e.value;return `<div class="item"><div class="q small"><span class="ex">${esc(String(v.aufgabe).replace(/ = \?$/,""))}</span><br>Antwort <s style="color:var(--warn)">${esc(nf(v.eingabe))}</s> · richtig <b>${esc(nf(v.richtig))}</b>${v.typ?`<div class="tiny" style="color:var(--warn)">${esc(TYP[v.typ]||v.typ)}</div>`:""}</div><span class="tiny muted">${dLabel(e.occurred_at.slice(0,10))}</span></div>`;}).join("")}`:""}
+      ${TIPS[k]&&s&&s.n>=3&&s.ok/s.n<.6?`<p class="small" style="margin-top:8px"><span class="tiny" style="font-weight:700;color:var(--court)">WAS IHR TUN KÖNNT</span><br>${esc(TIPS[k])}</p>`:""}<div style="height:10px"></div></details>`;};
   const kapK=Object.keys(KAP);
-  return `<div class="sec"><div class="card"><p class="small muted">Die Matheaufgaben werden bei jedem Match neu gewürfelt. Hier steht, was jede Stufe verlangt, mit einem Beispiel. Die markierte Zeile ist ${esc(S.kid.display_name)}s aktuelle Stufe.</p></div></div>
+  return `<div class="sec"><div class="card"><p class="small muted">Die Matheaufgaben werden bei jedem Match neu gewürfelt. Hier steht, was jede Stufe verlangt, mit einem Beispiel. Die markierte Zeile ist ${esc(S.kid.display_name)}s aktuelle Stufe. Darunter stehen die falschen Antworten – Lern-Match schreibt sie seit dem 8.11. mit.</p></div></div>
     ${kapK.map(k=>`<div class="sec"><h2>${esc(KAP[k].n)}${+k===mk?' <span class="pill ok">aktuell</span>':""}</h2><div class="card">${[...new Set(KAP[k].s)].map(block).join("")}</div></div>`).join("")}
     <div class="sec"><h2>Grundlagen (jedes Match)</h2><div class="card">${BASIS.map(block).join("")}</div></div>`;
 }
@@ -427,17 +535,18 @@ function aEnglisch(){
   return `<div class="sec"><div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><p class="small muted">Deutsch → Englisch, wie in der App abgefragt. Balken = Box 0–5.</p><button class="btn ghost" data-toggle="hard">${only?"Alle zeigen":"Nur schwierige"}</button></div></div>
   ${Object.entries(units).map(([u,ws])=>{const list=only?ws.filter(w=>(en[w.id]||{}).miss>=2):ws;if(!list.length)return"";const known=ws.filter(w=>(en[w.id]||{}).box>=4).length;
     return `<div class="sec"><h2>${esc(u)}</h2><div class="card"><details ${S.open["u-"+u]||only?"open":""} data-k="u-${esc(u)}"><summary><span class="small muted">${ws.length} Wörter · ${known} sicher</span>${CHEV}</summary>
-      ${list.map(w=>{const s=en[w.id];return `<div class="item"><div class="q"><b>${esc(w.en.join(" / "))}</b> <span class="muted">– ${esc(w.de)}</span>${w.note?`<div class="tiny muted">${esc(w.note)}</div>`:""}${s&&s.miss?`<div class="tiny" style="color:var(--warn)">${s.miss}× vergessen</div>`:""}</div><div class="pips">${[1,2,3,4,5].map(i=>`<i class="${s&&s.box>=i?"on":""}"></i>`).join("")}</div></div>`;}).join("")}</details></div></div>`;}).join("")}`;
+      ${list.map(w=>{const s=en[w.id];return `<div class="item"><div class="q"><b>${esc(w.en.join(" / "))}</b> <span class="muted">– ${esc(w.de)}</span>${w.note?`<div class="tiny muted">${esc(w.note)}</div>`:""}${s&&s.miss?`<div class="tiny" style="color:var(--warn)">${s.miss}× vergessen</div>`:""}${wrongLine(w.id)}</div><div class="pips">${[1,2,3,4,5].map(i=>`<i class="${s&&s.box>=i?"on":""}"></i>`).join("")}</div></div>`;}).join("")}</details></div></div>`;}).join("")}`;
 }
 function aGrammatik(){
   const eg=(LM()||{}).eg||{};
-  return `<div class="sec"><div class="card">${IDX.eg.map(g=>`<div class="item"><div class="q"><div>${esc(g.s).replace("___",`<span class="ans">${esc(g.o[g.a])}</span>`)}</div><div>${g.o.map((o,i)=>`<span class="opt ${i===g.a?"right":""}">${esc(o)}</span>`).join("")}</div>${g.tip?`<div class="tiny muted" style="margin-top:3px">${esc(g.tip)}</div>`:""}</div>${status(eg[g.id])}</div>`).join("")}</div></div>`;
+  return LEGEND+`<div class="sec"><div class="card">${IDX.eg.map(g=>`<div class="item"><div class="q"><div>${esc(g.s).replace("___",`<span class="ans">${esc(g.o[g.a])}</span>`)}</div><div>${g.o.map((o,i)=>`<span class="opt ${i===g.a?"right":""}">${esc(o)}</span>`).join("")}</div>${g.tip?`<div class="tiny muted" style="margin-top:3px">${esc(g.tip)}</div>`:""}${wrongLine(g.id)}</div>${status(eg[g.id])}</div>`).join("")}</div></div>`;
 }
 function aDeutsch(){
   const de=(LM()||{}).de||{},cats={};IDX.de.forEach(d=>(cats[d.cat]=cats[d.cat]||[]).push(d));
-  return Object.entries(cats).map(([c,items])=>{const seen=items.filter(d=>de[d.id]).length;
-    return `<div class="sec"><div class="card"><details ${S.open["d-"+c]?"open":""} data-k="d-${c}"><summary><span><b>${esc(DE_CAT[c]||c)}</b><br><span class="small muted">${items.length} Aufgaben · ${seen} geübt</span></span>${CHEV}</summary>
-      ${items.map(d=>`<div class="item"><div class="q small">${d.show}${d.tip?`<div class="tiny muted">${esc(d.tip)}</div>`:""}</div>${status(de[d.id])}</div>`).join("")}</details></div></div>`;}).join("");
+  return LEGEND+Object.entries(cats).map(([c,items])=>{const seen=items.filter(d=>de[d.id]).length,bad=items.filter(d=>(de[d.id]||{}).last===false).length;
+    return `<div class="sec"><div class="card"><details ${S.open["d-"+c]?"open":""} data-k="d-${c}"><summary><span><b>${esc(DE_CAT[c]||c)}</b><br><span class="small muted">${items.length} Aufgaben · ${seen} geübt${bad?` · <span style="color:var(--warn)">${bad} zuletzt falsch</span>`:""}</span></span>${CHEV}</summary>
+      ${DE_TIPS[c]?`<p class="tiny muted" style="padding:0 0 6px">Regel: ${esc(DE_TIPS[c])}</p>`:""}
+      ${items.slice().sort((x,y)=>{const r=d=>{const t=de[d.id];return !t?3:t.last===false?0:t.n>t.ok?1:2;};return r(x)-r(y)||((de[y.id]||{}).n||0)-((de[x.id]||{}).n||0)-(((de[y.id]||{}).ok||0)-((de[x.id]||{}).ok||0));}).map(d=>`<div class="item"><div class="q small">${d.show}${d.tip?`<div class="tiny muted">${esc(d.tip)}</div>`:""}${wrongLine(d.id,d,de[d.id])}</div>${status(de[d.id])}</div>`).join("")}</details></div></div>`;}).join("");
 }
 function aSchreiben(){
   const tb=(C.lm||{}).tiebreak;if(!tb)return '<div class="empty" style="margin-top:14px">Keine Schreibanlässe gefunden.</div>';
