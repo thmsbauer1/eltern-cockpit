@@ -1,7 +1,7 @@
 # Lernweg (früher Eltern-Cockpit)
 
 Übersicht für Thomas und Nadine über Philips Lernstände aus Lern-Match, Spürnase und dem Testtrainer.
-Läuft unter `https://thmsbauer1.github.io/eltern-cockpit/` und ist nur mit einem Eltern-Konto des Familienspeichers nutzbar.
+Läuft unter `https://thmsbauer1.github.io/lernweg/`. Anmeldung mit dem eigenen Konto des Familienspeichers (Eltern und Philip).
 
 ## Für wen
 
