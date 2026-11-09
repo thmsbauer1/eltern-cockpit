@@ -1,9 +1,21 @@
-# Eltern-Cockpit
+# Lernweg (früher Eltern-Cockpit)
 
 Übersicht für Thomas und Nadine über Philips Lernstände aus Lern-Match, Spürnase und dem Testtrainer.
 Läuft unter `https://thmsbauer1.github.io/eltern-cockpit/` und ist nur mit einem Eltern-Konto des Familienspeichers nutzbar.
 
-## Drei Bereiche
+## Für wen
+
+Für die ganze Familie. Jeder meldet sich mit seinem eigenen Konto an. Eltern sehen alles in Elternsprache, Philip sieht alles in Kindersprache und ohne Prozentzahlen (Spürnase-Kapitel erst, wenn er sie gelesen hat).
+
+## Weg und Manifest
+
+- **Weg:** die drei Stationen, Leitsätze, KI-Regeln und Signale (aus dem früheren Lernweg-Artifact), dazu „Für Philip“ mit Forscher-Pass, Lern-Tricks und Projekt-Werkstatt sowie „Für Eltern“.
+- **Manifest:** was die Eltern Philip versprechen und was Philip sich wünscht. Philips Teil ist ein Entwurf, den er selbst umschreibt.
+- Beide liegen als Fassungen in `family_docs`. Jeder kann eine Änderung vorschlagen; sie gilt, wenn alle zugestimmt haben (`doc_approvals`). Der Verlauf bleibt erhalten.
+- „Was wir unterwegs merken“ (`family_notes`) sammelt Erfahrungen als Grundlage für Änderungen.
+- Philips Pass und Projekte liegen in `app_progress` unter `lernweg`.
+
+## Lernstände: drei Bereiche
 
 - **Überblick:** Trainingstage der letzten zwei Wochen, Trefferquote je Fach im Vergleich zur Vorwoche, Hinweise, wo es hakt, und der Stand in jeder App (Mathe-Stufen, Vokabel-Boxen, Deutsch, Tie-Break-Texte mit Fehlern, Lesen, Tests).
 - **Aufgaben:** alle Inhalte zum Durchblättern, mit Lösung und Philips Stand je Aufgabe. Bei Mathe steht, was jede Stufe verlangt, weil die Aufgaben in der App gewürfelt werden.

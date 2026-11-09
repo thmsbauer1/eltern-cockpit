@@ -62,9 +62,10 @@
       const q=ls.get(QUEUE)||[];q.push({member_id:m.id,app,kind,value:value||{},occurred_at:new Date().toISOString()});ls.set(QUEUE,q.slice(-500));
       FS.flush();
     },
-    /* Lesender Zugriff auf eine Tabelle (nur angemeldet; die Datenbankregeln entscheiden, was sichtbar ist).
-       Beispiel: FS.rest("/rest/v1/activity_log?select=kind,value&member_id=eq.…") – genutzt vom Eltern-Cockpit. */
-    async rest(path){return req(path);},
+    /* Direkter Zugriff auf eine Tabelle (nur angemeldet; die Datenbankregeln entscheiden, was erlaubt ist).
+       Lesen: FS.rest("/rest/v1/activity_log?select=kind,value&member_id=eq.…")
+       Schreiben: FS.rest("/rest/v1/family_notes",{method:"POST",body:{…},headers:{Prefer:"return=representation"}}) – genutzt vom Lernweg. */
+    async rest(path,opt){return req(path,opt);},
     /* Ruft eine Edge Function im Familienspeicher auf (nur angemeldet), z. B. FS.fn("tiebreak-check",{…}). */
     async fn(name,body){return req("/functions/v1/"+encodeURIComponent(name),{method:"POST",body:body||{}});},
     async flush(){

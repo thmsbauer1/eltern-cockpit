@@ -7,11 +7,11 @@
 <meta name="theme-color" content="#f5f2ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#151a17" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Cockpit">
+<meta name="apple-mobile-web-app-title" content="Lernweg">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
-<title>Eltern-Cockpit</title>
+<title>Lernweg</title>
 <style>
 :root{
   --bg:#f5f2ea;--card:#fffdf8;--ink:#1d2621;--muted:#68706a;--line:#e3ddd0;--soft:#efeadf;
@@ -90,8 +90,8 @@ header.top{padding:calc(env(safe-area-inset-top) + 18px) 0 10px}
 .chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:.88rem;font-weight:600;white-space:nowrap;cursor:pointer}
 .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
-.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);height:var(--tab)}
-.tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.74rem;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);height:var(--tab)}
+.tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.7rem;padding:0;font-weight:600;color:var(--muted);cursor:pointer}
 .tabs button svg{width:22px;height:22px}
 .tabs button.on{color:var(--court)}
 .text{font-family:Georgia,"Iowan Old Style","Times New Roman",serif;font-size:1rem;line-height:1.55}
@@ -134,6 +134,104 @@ details[open]>summary .chev{transform:rotate(90deg)}
 .lvltab tr.cur td:first-child{color:var(--good)}
 .ex{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;color:var(--muted)}
 .mark{background:color-mix(in srgb,#e2b23c 30%,transparent);border-radius:3px;padding:0 2px}
+/* ---------- Lernweg und Manifest ---------- */
+:root{--band:#1d3a2c;--band-ink:#f5f2ea;--gold:#e2b23c;--gold-ink:#8a6410;--gold-soft:#f7ecd0}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--band:#0d1a14;--gold-ink:#e2b23c;--gold-soft:#3a3018}}
+.btn.sm{width:auto;padding:9px 14px;font-size:.9rem}
+.btn.ghost.light{color:var(--band-ink);border-color:rgba(255,255,255,.3)}
+.row-btn{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.linkbtn{background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font-size:inherit}
+.linkbtn.light{color:var(--band-ink);opacity:.75}
+.iconbtn{background:var(--soft);border:0;border-radius:8px;width:30px;height:30px;cursor:pointer;color:var(--muted);flex:none}
+.hero{background:var(--band);color:var(--band-ink);border-radius:18px;padding:20px 18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;border:44px solid rgba(226,178,60,.1);pointer-events:none}
+.hero>*{position:relative}
+.hero-h{font-size:1.5rem;line-height:1.15;margin:4px 0 6px;letter-spacing:-.01em}
+.hero-p{font-size:.95rem;opacity:.85}
+.hero-q{margin-top:12px;font-size:1.15rem;font-weight:700;line-height:1.25}
+.steer{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.steer-row{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:center;font-size:.82rem}
+.steer-bar{display:flex;height:11px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.12)}
+.steer-bar i{display:block;height:100%}
+.sw{display:inline-block;width:9px;height:9px;border-radius:3px;vertical-align:-1px;margin:0 3px 0 6px}
+.stations{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.station{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px;cursor:pointer;min-width:0}
+.station.on{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.st-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.st-num{width:28px;height:28px;border-radius:9px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-weight:800}
+.station.on .st-num{background:var(--gold);color:#1d2621}
+.st-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.st-grid>div{background:var(--soft);border-radius:10px;padding:10px}
+.klbl{font-weight:800;letter-spacing:.06em;color:var(--gold-ink)}
+@media (max-width:560px){.stations,.st-grid{grid-template-columns:1fr}}
+.lw-banner{background:var(--gold-soft);border-radius:14px;padding:12px 14px}
+.lw-ok{background:var(--court-soft);color:var(--good);border-radius:12px;padding:10px 14px;font-weight:600;font-size:.9rem}
+.who{display:inline-block;margin-right:10px;color:var(--muted)}
+.who.yes{color:var(--good);font-weight:700}
+.ed-l{display:flex;flex-direction:column;gap:4px;font-size:.82rem;font-weight:600;color:var(--muted)}
+.ed-l .inp,textarea.inp{font-weight:400;color:var(--ink);font-size:.95rem;padding:9px 10px;resize:vertical;font-family:inherit}
+.ed-item{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.ed-item:first-child{border-top:0;padding-top:0}
+.ed-num{width:26px;height:26px;border-radius:8px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex:none}
+.ed-ctl{display:flex;flex-direction:column;gap:6px}
+.mf-item{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.mf-item:first-of-type{border-top:0}
+.mf-n{flex:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+.mf-item.p .mf-n{background:var(--court-soft);color:var(--good)}
+.mf-item.k .mf-n{background:var(--gold-soft);color:var(--gold-ink)}
+.note-form{display:flex;gap:8px;align-items:flex-end}
+.note-form textarea{flex:1}
+.stamps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+.stamp{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;font-size:.72rem;font-weight:700;opacity:.6}
+.stamp .ring{width:48px;height:48px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:1.3rem;filter:grayscale(1)}
+.stamp.on{opacity:1}
+.stamp.on .ring{border:2px solid var(--gold);background:var(--gold);filter:none}
+.passbar{height:7px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;margin:12px 0 6px}
+.passbar i{display:block;height:100%;background:var(--gold)}
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.rule{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:5px;cursor:pointer;min-height:110px}
+.rule .rn{font-size:1.5rem;font-weight:800;color:var(--gold-ink);line-height:1}
+.rule.on{background:var(--band);color:var(--band-ink);border-color:var(--band)}
+.rule.on .rn{color:var(--gold)}
+.tier{margin-top:10px}
+.tier .batt{display:inline-flex;gap:2px;vertical-align:-1px}
+.batt i{width:7px;height:10px;border-radius:2px;background:var(--r2)}
+.tier-stark .batt i.on{background:var(--good)}.tier-gut .batt i.on{background:var(--gold)}.tier-falle .batt i.on{background:var(--warn)}
+.pill .batt{display:inline-flex;gap:2px;vertical-align:-1px}.pill .batt i.on{background:currentColor}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+.tool{position:relative;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:.9rem;min-width:0}
+.tool.on{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.tool.trap{border-style:dashed;background:transparent}
+.tier-stark .tool{border-color:color-mix(in srgb,var(--good) 45%,var(--line))}
+.ti{font-size:1.25rem;flex:none}
+.chk{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:var(--good);color:#fff;font-size:.75rem;display:flex;align-items:center;justify-content:center}
+.steps{margin:4px 0 0;padding-left:20px}
+.steps li{margin:3px 0}
+.mission{background:var(--band);color:var(--band-ink);border-radius:14px;padding:14px;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.clock{font-size:2.4rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.dice{font-size:1.15rem;font-weight:700;min-height:2.6em}
+.ideas{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.idea{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:3px;cursor:pointer;min-width:0}
+.idea.own{border-style:dashed}
+.idea.on{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.proj{background:var(--band);color:var(--band-ink);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.pstat{border:0;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.82rem;cursor:pointer}
+.pstat.s0{background:rgba(255,255,255,.16);color:var(--band-ink)}.pstat.s1{background:var(--gold);color:#1d2621}.pstat.s2{background:var(--good);color:#fff}
+.bridge{display:grid;grid-template-columns:1fr 1.3fr;gap:0;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.b-m{background:var(--band);color:var(--band-ink);padding:12px 14px}
+.b-u{background:var(--card);padding:12px 14px}
+@media (max-width:480px){.bridge{grid-template-columns:1fr}}
+.balance{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;margin-top:10px}
+.balance ul{margin:6px 0 0;padding-left:18px}
+.balance .plus{font-size:1.8rem;font-weight:800;color:var(--gold-ink);align-self:center}
+table.study td.up{color:var(--good);font-weight:700}table.study td.down{color:var(--warn);font-weight:700}
+table.study td,table.study th{white-space:normal}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dcol{border-radius:14px;padding:14px}.dcol ul{margin:6px 0 0;padding-left:18px}
+.dcol.yes{background:var(--court-soft)}.dcol.yes h3{color:var(--good)}
+.dcol.no{background:var(--warn-soft)}.dcol.no h3{color:var(--warn)}
+@media (max-width:480px){.dd{grid-template-columns:1fr}}
 .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--court);border-radius:50%;animation:sp 1s linear infinite;vertical-align:middle}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:420px){.grid3{gap:8px}.tile{padding:10px 9px}.tile .big{font-size:1.35rem}}
@@ -142,7 +240,9 @@ details[open]>summary .chev{transform:rotate(90deg)}
 <body>
 <div id="app" class="wrap"><p class="muted" style="margin-top:30vh;text-align:center"><span class="spin"></span></p></div>
 <nav class="tabs" id="tabs" hidden><div class="in">
-  <button data-tab="heute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Überblick</button>
+  <button data-tab="weg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>Weg</button>
+  <button data-tab="manifest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg>Manifest</button>
+  <button data-tab="heute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span data-l="heute">Überblick</span></button>
   <button data-tab="aufgaben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6M8 11h6"/></svg>Aufgaben</button>
   <button data-tab="entwicklung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/></svg>Entwicklung</button>
 </div></nav>
@@ -229,8 +329,8 @@ const LEVELS={
 };
 
 /* ---------- Zustand ---------- */
-const S={tab:"heute",sub:"mathe",kids:[],kid:null,P:{},log:[],daily:[],loaded:null,err:null,range:28,open:{}};
-try{const t=localStorage.getItem("cockpit-tab");if(t)S.tab=t;const s=localStorage.getItem("cockpit-sub");if(s)S.sub=s;}catch(e){}
+const S={tab:"heute",sub:"mathe",wsub:"weg",kids:[],kid:null,me:null,members:[],P:{},log:[],daily:[],docs:[],appr:[],notes:[],edit:null,viewV:{},hist:null,station:null,lwMsg:null,loaded:null,err:null,range:28,open:{}};
+try{const t=localStorage.getItem("cockpit-tab");if(t)S.tab=t;const s=localStorage.getItem("cockpit-sub");if(s)S.sub=s;const w=localStorage.getItem("cockpit-wsub");if(w)S.wsub=w;}catch(e){}
 
 async function loadKid(){
   const id=S.kid.id,q=encodeURIComponent;
@@ -239,7 +339,12 @@ async function loadKid(){
     FS.rest("/rest/v1/activity_log?select=app,kind,value,occurred_at&member_id=eq."+id+"&order=occurred_at.desc&limit=2000"),
     FS.rest("/rest/v1/progress_daily?select=app,day,m:data->m,en:data->en,eg:data->eg,de:data->de,cards:data->cards&member_id=eq."+id+"&order=day.asc").catch(()=>[])
   ]);
-  S.P={};(prog||[]).forEach(r=>S.P[r.app]=r);S.log=log||[];S.daily=daily||[];S.loaded=new Date();
+  S.P={};(prog||[]).forEach(r=>S.P[r.app]=r);S.log=log||[];S.daily=daily||[];
+  const [docs,appr,notes]=await Promise.all([
+    FS.rest("/rest/v1/family_docs?select=id,doc,content,note,created_by,created_at&order=id.asc").catch(()=>[]),
+    FS.rest("/rest/v1/doc_approvals?select=version_id,member_id,approved_at").catch(()=>[]),
+    FS.rest("/rest/v1/family_notes?select=id,member_id,topic,body,created_at&order=created_at.desc&limit=300").catch(()=>[])]);
+  S.docs=docs||[];S.appr=appr||[];S.notes=notes||[];S.loaded=new Date();
 }
 const LM=()=>(S.P["lern-match"]||{}).data||null;
 const SN=()=>(S.P["spuernase"]||{}).data||null;
@@ -320,10 +425,11 @@ function assess(){
       const errs=E.filter(e=>e.value.f==="m"&&e.value.b===k),typs=Object.entries(countBy(errs,e=>e.value.typ)).sort((a,b)=>b[1]-a[1]);
       const pat=typs.length&&typs[0][1]>=2?`<br>Typischer Fehler: <b>${esc(TYP[typs[0][0]]||typs[0][0])}</b> (${typs[0][1]} von ${errs.length} mitgeschriebenen Fehlern)`:"";
       const ex=errs[0]?`<br>Zuletzt: ${esc(String(errs[0].value.aufgabe).replace(/ = \?$/,""))} → ${q(nf(errs[0].value.eingabe))} statt ${q(nf(errs[0].value.richtig))}`:"";
-      if(s.ok===0)A.now.push({ic:"🧩",h:`${SKILLS[k]||k}: noch keine Aufgabe richtig`,p:`0 von ${s.n} richtig, Stufe ${s.lvl}. Wenn gar nichts klappt, ist das Thema meist noch nicht verstanden – kein Flüchtigkeitsfehler.${pat}${ex}`,tip:TIPS[k],go:"mathe"});
-      else if(s.n>=5&&acc<.5)(acc<.4||(typs.length&&typs[0][1]>=2)?A.now:A.watch).push({ic:"🔍",h:`${SKILLS[k]||k}: ${s.ok} von ${s.n} richtig`,p:`Stufe ${s.lvl} von 3${s.run<=-2?`, die letzten ${-s.run} Antworten falsch`:""}.${pat}${ex}`,tip:TIPS[k],go:"mathe"});
+      const kp=typs.length&&typs[0][1]>=2&&KIDTYP[typs[0][0]]?KIDTYP[typs[0][0]]:"";
+      if(s.ok===0)A.now.push({ic:"🧩",h:`${SKILLS[k]||k}: noch keine Aufgabe richtig`,p:`0 von ${s.n} richtig, Stufe ${s.lvl}. Wenn gar nichts klappt, ist das Thema meist noch nicht verstanden – kein Flüchtigkeitsfehler.${pat}${ex}`,tip:TIPS[k],go:"mathe",k:{h:`${SKILLS[k]||k}: ist noch neu für dich`,p:"Bisher hat noch keine Aufgabe geklappt. Das ist normal bei etwas Neuem.",tip:KIDTIPS[k]||"Frag Mama oder Papa, ob ihr euch eine Aufgabe zusammen anschaut."}});
+      else if(s.n>=5&&acc<.5)(acc<.4||(typs.length&&typs[0][1]>=2)?A.now:A.watch).push({ic:"🔍",h:`${SKILLS[k]||k}: ${s.ok} von ${s.n} richtig`,p:`Stufe ${s.lvl} von 3${s.run<=-2?`, die letzten ${-s.run} Antworten falsch`:""}.${pat}${ex}`,tip:TIPS[k],go:"mathe",k:{h:`${SKILLS[k]||k}: klappt noch nicht so oft`,p:kp,tip:KIDTIPS[k]||"Schau dir die Aufgabe in Ruhe an und frag nach, wenn du nicht weiterkommst."}});
       else if(s.lvl===3&&s.n>=6&&acc>=.7)strong.push(k);});
-    if(strong.length)A.good.push({ic:"⭐",h:`Mathe auf höchster Stufe`,p:strong.map(k=>`${esc(SKILLS[k])} (${m[k].ok} von ${m[k].n})`).join(", ")});
+    if(strong.length)A.good.push({ic:"⭐",h:`Mathe auf höchster Stufe`,p:strong.map(k=>`${esc(SKILLS[k])} (${m[k].ok} von ${m[k].n})`).join(", "),k:{h:"Mathe-Profi",p:"Höchste Stufe in: "+strong.map(k=>esc(SKILLS[k])).join(", ")}});
     /* Deutsch: Übungen, mitgeschriebene Fehler und freies Schreiben zusammen */
     const de=lm.de||{},grp={};
     const add=(cat,src,typ,word,n)=>{const g=grp[cat]||(grp[cat]={n:0,src:{},typ:{},ex:{}});g.n+=n;g.src[src]=(g.src[src]||0)+n;if(typ)g.typ[typ]=(g.typ[typ]||0)+n;if(word)g.ex[word]=(g.ex[word]||0)+n;};
@@ -338,32 +444,32 @@ function assess(){
       const ty=Object.entries(g.typ).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`${esc(TYP[t]||t)}: ${n}×`).join(" · ");
       const where=both?"in den Übungen und beim freien Schreiben":g.src.schreiben?"beim freien Schreiben":"in den Übungen";
       (both||g.n>=5?A.now:A.watch).push({ic:"✏️",h:`${DE_CAT[cat]||TB_CAT[cat]||cat}: ${g.n} Fehler ${where}`,
-        p:`${ty?ty+"<br>":""}${ex?"Beispiele: "+ex:""}${both?"<br>Taucht in beiden Bereichen auf – das ist ein echtes Muster, kein Zufall.":""}`,tip:DE_TIPS[cat]||DE_TIPS._,go:"deutsch"});});
+        p:`${ty?ty+"<br>":""}${ex?"Beispiele: "+ex:""}${both?"<br>Taucht in beiden Bereichen auf – das ist ein echtes Muster, kein Zufall.":""}`,tip:DE_TIPS[cat]||DE_TIPS._,go:"deutsch",k:{h:`${DE_CAT[cat]||TB_CAT[cat]||cat}: hier wackelt es noch`,p:`${Object.entries(g.typ).sort((a,b)=>b[1]-a[1]).map(([t])=>KIDTYP[t]).filter(Boolean).join(" ")}${ex?"<br>Zum Beispiel: "+ex:""}`,tip:DE_KIDTIPS[cat]||DE_KIDTIPS._}});});
     /* Englisch */
     const en=lm.en||{},hard=IDX.words.filter(w=>(en[w.id]||{}).miss>=3).sort((a,b)=>en[b.id].miss-en[a.id].miss);
-    if(hard.length)A.watch.push({ic:"🔤",h:`Englisch: ${hard.length===1?"ein Wort hakt":hard.length+" Wörter haken"}`,p:hard.slice(0,6).map(w=>`<b>${esc(w.en[0])}</b> (${esc(w.de)}, ${en[w.id].miss}× vergessen)`).join(", "),tip:"Diese Wörter auf Kärtchen schreiben oder im Alltag auf Englisch benutzen.",go:"englisch"});
+    if(hard.length)A.watch.push({ic:"🔤",h:`Englisch: ${hard.length===1?"ein Wort hakt":hard.length+" Wörter haken"}`,p:hard.slice(0,6).map(w=>`<b>${esc(w.en[0])}</b> (${esc(w.de)}, ${en[w.id].miss}× vergessen)`).join(", "),tip:"Diese Wörter auf Kärtchen schreiben oder im Alltag auf Englisch benutzen.",go:"englisch",k:{h:"Diese Wörter wollen noch nicht in deinen Kopf",p:hard.slice(0,6).map(w=>`<b>${esc(w.en[0])}</b> (${esc(w.de)})`).join(", "),tip:"Schreib sie auf Kärtchen und frag dich selbst ab."}});
     const sp=E.filter(e=>e.value.f==="e"&&e.value.typ==="schreibweise");
-    if(sp.length>=3)A.watch.push({ic:"🔡",h:"Englisch: Wörter gewusst, Schreibweise wackelt",p:sp.slice(0,5).map(e=>`${q(e.value.eingabe)} statt ${q(e.value.richtig)}`).join(", "),tip:"Wörter einmal abschreiben und laut buchstabieren lassen.",go:"englisch"});
+    if(sp.length>=3)A.watch.push({ic:"🔡",h:"Englisch: Wörter gewusst, Schreibweise wackelt",p:sp.slice(0,5).map(e=>`${q(e.value.eingabe)} statt ${q(e.value.richtig)}`).join(", "),tip:"Wörter einmal abschreiben und laut buchstabieren lassen.",go:"englisch",k:{h:"Englisch: Wort gewusst, Buchstaben wackeln",p:sp.slice(0,5).map(e=>`${q(e.value.eingabe)} statt ${q(e.value.richtig)}`).join(", "),tip:"Buchstabier die Wörter einmal laut."}});
     const egW=IDX.eg.filter(g=>((lm.eg||{})[g.id]||{}).last===false);
-    if(egW.length>=3)A.watch.push({ic:"💬",h:`Englische Grammatik: ${egW.length} Sätze zuletzt falsch`,p:egW.slice(0,3).map(g=>q(g.s.replace("___",g.o[g.a]))).join(", "),tip:"Die Sätze laut vorlesen – oft hört man, was richtig klingt.",go:"grammatik"});
-    const sicher=vocabBuckets(en).sicher;if(sicher>=8)A.good.push({ic:"🧠",h:`${sicher} Englisch-Vokabeln sitzen fest`,p:"Box 4 oder 5 – sie kommen nur noch selten zur Wiederholung."});
+    if(egW.length>=3)A.watch.push({ic:"💬",h:`Englische Grammatik: ${egW.length} Sätze zuletzt falsch`,p:egW.slice(0,3).map(g=>q(g.s.replace("___",g.o[g.a]))).join(", "),tip:"Die Sätze laut vorlesen – oft hört man, was richtig klingt.",go:"grammatik",k:{h:"Diese englischen Sätze klappen noch nicht",p:egW.slice(0,3).map(g=>q(g.s.replace("___",g.o[g.a]))).join(", "),tip:"Lies die Sätze laut – oft hörst du, was richtig klingt."}});
+    const sicher=vocabBuckets(en).sicher;if(sicher>=8)A.good.push({ic:"🧠",h:`${sicher} Englisch-Vokabeln sitzen fest`,p:"Box 4 oder 5 – sie kommen nur noch selten zur Wiederholung.",k:{h:`${sicher} Vokabeln sitzen fest`,p:"Die kommen nur noch selten dran."}});
     /* Trends */
     const t=today(),cur=histSum(lm.hist,addDays(t,-6),t),prev=histSum(lm.hist,addDays(t,-13),addDays(t,-7));
     ["m","e","d"].forEach(k=>{if(cur[k][1]<15||prev[k][1]<15)return;const a=pct(cur[k][0],cur[k][1]),b=pct(prev[k][0],prev[k][1]);
       if(b-a>=10)A.watch.push({ic:"📉",h:`${SUBJ[k]}: ${b-a} Punkte unter der Vorwoche`,p:`${a} % statt ${b} % richtig. Das passiert oft, wenn neuer Stoff dazukommt – in ein, zwei Wochen noch einmal anschauen.`});
-      else if(a-b>=5)A.good.push({ic:"📈",h:`${SUBJ[k]}: ${a-b} Punkte besser als in der Vorwoche`,p:`${a} % statt ${b} % richtig.`});});
+      else if(a-b>=5)A.good.push({ic:"📈",h:`${SUBJ[k]}: ${a-b} Punkte besser als in der Vorwoche`,p:`${a} % statt ${b} % richtig.`,k:{h:`${SUBJ[k]}: besser als letzte Woche!`,p:"Weiter so."}});});
     /* Schreiben: selbst gefundene Fehler */
     const D=(lm.tb||{}).days||{},f=Object.values(D).reduce((a,x)=>a+(x.f||0),0),self=Object.values(D).reduce((a,x)=>a+(x.s||0),0);
-    if(f>=4&&self/f>=.5)A.good.push({ic:"🕵️",h:"Findet eigene Fehler",p:`Im Tie-Break ${self} von ${f} Fehlern ohne Tipp selbst entdeckt.`});
+    if(f>=4&&self/f>=.5)A.good.push({ic:"🕵️",h:"Findet eigene Fehler",p:`Im Tie-Break ${self} von ${f} Fehlern ohne Tipp selbst entdeckt.`,k:{h:"Du findest deine Fehler selbst",p:`${self} von ${f} Fehlern hast du ohne Tipp entdeckt.`}});
   }
   /* Dranbleiben */
   const days=trainDays();let n7=0;for(let i=0;i<7;i++)if(days[addDays(today(),-i)])n7++;
-  if(n7>=5)A.good.push({ic:"🎾",h:`Dranbleiben: an ${n7} von 7 Tagen geübt`,p:"Regelmäßigkeit ist wichtiger als lange Einheiten."});
+  if(n7>=5)A.good.push({ic:"🎾",h:`Dranbleiben: an ${n7} von 7 Tagen geübt`,p:"Regelmäßigkeit ist wichtiger als lange Einheiten.",k:{h:`Du bleibst dran: an ${n7} von 7 Tagen geübt`,p:"Jeden Tag ein bisschen ist der stärkste Lern-Trick."}});
   /* Lesen: Fragetypen */
   if(sn){const T={};Object.values(sn.faelle||{}).forEach(f=>Object.values(f.kap||{}).forEach(r=>(r.typen||[]).forEach(([ty,ok])=>{T[ty]=T[ty]||[0,0];T[ty][1]++;if(ok)T[ty][0]++;})));
     Object.entries(T).forEach(([ty,[ok,n]])=>{if(n<4)return;const a=ok/n;
-      if(a>=.85)A.good.push({ic:"🔎",h:`Lesen: ${SN_TYP[ty]||ty}`,p:`${ok} von ${n} Fragen auf Anhieb richtig.`});
-      else if(a<.6)A.watch.push({ic:"📖",h:`Lesen: ${SN_TYP[ty]||ty}`,p:`${ok} von ${n} Fragen auf Anhieb richtig.`,tip:ty==="beweis"?"Beim Vorlesen fragen: Wo steht das im Text? Mit dem Finger zeigen lassen.":"Nach dem Lesen kurz nacherzählen lassen.",go:"lesen"});});}
+      if(a>=.85)A.good.push({ic:"🔎",h:`Lesen: ${SN_TYP[ty]||ty}`,p:`${ok} von ${n} Fragen auf Anhieb richtig.`,k:{h:`Lesen: ${SN_TYP[ty]||ty} kannst du richtig gut`,p:""}});
+      else if(a<.6)A.watch.push({ic:"📖",h:`Lesen: ${SN_TYP[ty]||ty}`,p:`${ok} von ${n} Fragen auf Anhieb richtig.`,tip:ty==="beweis"?"Beim Vorlesen fragen: Wo steht das im Text? Mit dem Finger zeigen lassen.":"Nach dem Lesen kurz nacherzählen lassen.",go:"lesen",k:{h:`Lesen: ${SN_TYP[ty]||ty} übst du noch`,p:"",tip:"Frag dich beim Lesen: Wo steht das im Text?"}});});}
   return A;
 }
 /* ---------- Diagramme (SVG, ohne Bibliothek) ---------- */
@@ -415,15 +521,20 @@ function vHeute(){
       <div class="sub">${cur[k][1]} Aufgaben</div><div class="sub">${dl||"&nbsp;"}</div></div>`;};
   const H=assess();
   let h=`<div class="sec"><div class="card">
-     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2>Trainingstage</h2><span class="small muted">${n7} von 7 Tagen${st>1?` · Serie ${st} Tage`:""}</span></div>
+     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h2>${KID()?"Deine Trainingstage":"Trainingstage"}</h2><span class="small muted">${n7} von 7 Tagen${st>1?` · Serie ${st} Tage`:""}</span></div>
      <div class="days">${last14.map(d=>`<div class="d ${days[d]?"on":""} ${slams[d]?"slam":""} ${d===t?"today":""}" title="${dLabel(d,{weekday:"short",day:"numeric",month:"numeric"})}${slams[d]?" · Grand Slam":""}">${new Date(d+"T12:00:00").getDate()}</div>`).join("")}</div>
      <div class="dl">${last14.map(d=>`<span>${wd(d)}</span>`).join("")}</div>
      ${lm?`<p class="note">Gold umrandet: Grand-Slam-Tag. Pokale bisher: ${["ao","fo","wi","us"].map(k=>({ao:"Melbourne",fo:"Paris",wi:"London",us:"New York"})[k]+" "+((lm.titles||{})[k]||0)).join(" · ")}</p>`:""}
    </div></div>`;
-  if(lm)h+=`<div class="sec"><h2>Letzte 7 Tage <span class="small muted" style="font-weight:400">· Anteil richtig, zur Vorwoche</span></h2><div class="grid3">${tile("m")}${tile("e")}${tile("d")}</div></div>`;
-  const item=x=>`<div class="hint ${x.cls}"><div class="ic">${x.ic}</div><div class="stack-s" style="min-width:0;flex:1"><p><b>${esc(x.h)}</b></p><p class="small muted">${x.p}</p>${x.tip?`<p class="small"><span class="tiny" style="font-weight:700;color:var(--court)">WAS IHR TUN KÖNNT</span><br>${esc(x.tip)}</p>`:""}${x.go?`<button class="btn ghost" style="margin-top:4px" data-go="${x.go}">Aufgaben ansehen</button>`:""}</div></div>`;
+  const kTile=k=>{const a=pct(cur[k][0],cur[k][1]),b=pct(prev[k][0],prev[k][1]);return `<div class="tile"><div class="lbl"><span class="dot" style="background:${COL[k]}"></span>${SUBJ[k]}</div><div class="big">${cur[k][1]}</div><div class="sub">Aufgaben</div><div class="sub">${a!=null&&b!=null&&a-b>=3?'<span class="delta up">▲ besser als letzte Woche</span>':"&nbsp;"}</div></div>`;};
+  if(lm)h+=KID()?`<div class="sec"><h2>Diese Woche geübt</h2><div class="grid3">${kTile("m")}${kTile("e")}${kTile("d")}</div></div>`:`<div class="sec"><h2>Letzte 7 Tage <span class="small muted" style="font-weight:400">· Anteil richtig, zur Vorwoche</span></h2><div class="grid3">${tile("m")}${tile("e")}${tile("d")}</div></div>`;
+  if(KID()){H.now=H.now.concat(H.watch).filter(x=>x.k).map(x=>Object.assign({},x,x.k));H.watch=[];H.good=H.good.filter(x=>x.k).map(x=>Object.assign({},x,x.k));}
+  const item=x=>`<div class="hint ${x.cls}"><div class="ic">${x.ic}</div><div class="stack-s" style="min-width:0;flex:1"><p><b>${esc(x.h)}</b></p>${x.p?`<p class="small muted">${x.p}</p>`:""}${x.tip?`<p class="small"><span class="tiny" style="font-weight:700;color:var(--court)">${KID()?"SO KANNST DU ÜBEN":"WAS IHR TUN KÖNNT"}</span><br>${esc(x.tip)}</p>`:""}${x.go?`<button class="btn ghost" style="margin-top:4px" data-go="${x.go}">Aufgaben ansehen</button>`:""}</div></div>`;
   const grp=(t,list,cls,sub)=>list.length?`<div class="card"><h3 style="margin-bottom:2px">${t}</h3><p class="tiny muted" style="margin-bottom:6px">${sub}</p>${list.map(x=>item(Object.assign({cls},x))).join("")}</div>`:"";
-  if(H.now.length||H.watch.length||H.good.length)h+=`<div class="sec"><h2>Einschätzung</h2>
+  if(KID()){if(H.now.length||H.good.length)h+=`<div class="sec"><h2>So läuft es bei dir</h2>
+    ${grp("Das kannst du richtig gut",H.good,"good","Darauf kannst du stolz sein.")}
+    ${grp("Hier lohnt sich Training",H.now,"look","Fehler sind Wegweiser. Sie zeigen, wo dein Gehirn gerade wächst.")}</div>`;}
+  else if(H.now.length||H.watch.length||H.good.length)h+=`<div class="sec"><h2>Einschätzung</h2>
     ${grp("Jetzt angehen",H.now,"look","Hier lohnt sich gemeinsames Üben oder ein kurzes Erklären.")}
     ${grp("Im Blick behalten",H.watch,"look","Noch kein Grund zur Sorge – in ein, zwei Wochen wieder anschauen.")}
     ${grp("Stärken",H.good,"good","Das läuft – gern auch einmal loben.")}
@@ -437,7 +548,7 @@ function secMathe(lm){
   const order=[...rel.filter(k=>m[k]),...used.filter(k=>!rel.includes(k))];
   const row=k=>{const s=m[k],a=pct(s.ok,s.n),c=a<50?"var(--warn)":a<75?"var(--w)":"var(--good)";
     return `<div class="skill"><div class="nm">${esc(SKILLS[k]||k)}${rel.includes(k)?' <span class="pill">Kapitel</span>':""}</div><div class="lv" title="Stufe ${s.lvl} von 3">${[1,2,3].map(i=>`<i class="${s.lvl>=i?"on":""}"></i>`).join("")}</div>
-      <div class="meta"><div class="bar"><i style="width:${a}%;background:${c}"></i></div><span style="min-width:120px;text-align:right">${s.ok} von ${s.n} richtig · ${a} %</span></div></div>`;};
+      <div class="meta"><div class="bar"><i style="width:${a}%;background:${c}"></i></div><span style="min-width:120px;text-align:right">${s.ok} von ${s.n} richtig${KID()?"":" · "+a+" %"}</span></div></div>`;};
   return `<div class="sec"><h2>Mathe</h2><div class="card"><p class="small muted">Schwerpunkt: <b style="color:var(--ink)">${esc(kap.n)}</b>. Kästchen = Stufe 1 bis 3. Nach drei richtigen Antworten in Folge geht es eine Stufe hoch, nach zwei falschen wieder runter.</p>
     <div style="margin-top:8px">${order.length?order.map(row).join(""):'<p class="muted small">Noch keine Matheaufgaben.</p>'}</div></div></div>`;
 }
@@ -457,7 +568,7 @@ function secDeutsch(lm){
   const ks=Object.keys(cats).sort((a,b)=>cats[a].last/cats[a].items-cats[b].last/cats[b].items||cats[a].ok/cats[a].n-cats[b].ok/cats[b].n);
   return `<div class="sec"><h2>Deutsch</h2><div class="card">${ks.length?ks.map(k=>{const c=cats[k],a=pct(c.ok,c.n),col=a<50?"var(--warn)":a<75?"var(--w)":"var(--good)";
     const l=pct(c.last,c.items),lc=l<50?"var(--warn)":l<80?"var(--w)":"var(--good)";
-    return `<div class="skill"><div class="nm">${esc(DE_CAT[k]||k)}</div><span class="small muted">${c.items} von ${tot[k]} geübt</span><div class="meta"><div class="bar"><i style="width:${l}%;background:${lc}"></i></div><span style="min-width:150px;text-align:right">${c.last} von ${c.items} zuletzt richtig</span></div><div class="meta tiny">Alle Versuche: ${c.ok} von ${c.n} richtig (${a} %)</div></div>`;}).join(""):'<p class="small muted">Noch keine Deutschaufgaben.</p>'}
+    return `<div class="skill"><div class="nm">${esc(DE_CAT[k]||k)}</div><span class="small muted">${c.items} von ${tot[k]} geübt</span><div class="meta"><div class="bar"><i style="width:${l}%;background:${lc}"></i></div><span style="min-width:150px;text-align:right">${c.last} von ${c.items} zuletzt richtig</span></div><div class="meta tiny">Alle Versuche: ${c.ok} von ${c.n} richtig${KID()?"":" ("+a+" %)"}</div></div>`;}).join(""):'<p class="small muted">Noch keine Deutschaufgaben.</p>'}
     <p class="note">Der Balken zeigt, wie viele der geübten Wörter und Sätze beim letzten Mal richtig waren. „Alle Versuche“ zählt auch die ersten mit, bevor eine Regel saß.</p></div></div>`;
 }
 function wordDiff(a,b){
@@ -558,7 +669,8 @@ function aLesen(){
   const sn=SN()||{},ev=readEvents();
   return C.faelle.map(f=>{const st=(sn.faelle||{})[f.id]||{};
     return `<div class="sec"><h2>${f.nr}. ${esc(f.titel)} <span class="pill">Stufe ${f.stufe}</span></h2><div class="card"><p class="small muted">${esc(f.art)} · ${esc(f.ort)}${st.geloest?' · <b style="color:var(--good)">gelöst</b>':""}</p>
-      ${f.kapitel.map((k,i)=>{const r=(st.kap||{})[i],words=k.absaetze.join(" ").split(/\s+/).length,e=ev.filter(x=>x.value.fall===f.nr&&x.value.kapitel===i+1).pop();
+      ${KID()&&!f.kapitel.some((_,i)=>((st.kap||{})[i]||{}).fertig)?`<p class="small muted">Noch nicht gelesen – hier siehst du die Kapitel, sobald du sie in Spürnase gelesen hast.</p>`:""}
+      ${f.kapitel.map((k,i)=>{const r=(st.kap||{})[i];if(KID()&&!(r&&r.fertig))return "";const words=k.absaetze.join(" ").split(/\s+/).length,e=ev.filter(x=>x.value.fall===f.nr&&x.value.kapitel===i+1).pop();
         return `<details data-k="f-${f.id}-${i}" ${S.open["f-"+f.id+"-"+i]?"open":""}><summary><span><b>Kapitel ${i+1}: ${esc(k.titel)}</b><br><span class="small muted">${words} Wörter${r&&r.fertig?` · ${r.first} von ${k.fragen.length} auf Anhieb`:""}${e&&e.value.wpm?` · ${e.value.wpm} Wörter/Min.`:""}</span></span>${CHEV}</summary>
           <div class="stack" style="padding-bottom:14px">${k.absaetze.map(p=>`<p class="text">${esc(p).replace(/\[\[(b\d+)\]\]([^.!?]*[.!?])/g,'<span class="mark">$2</span>').replace(/\[\[b\d+\]\]/g,"")}</p>`).join("")}
           <h3>Fragen</h3>${k.fragen.map((q,qi)=>{const res=r&&r.typen&&r.typen[qi];return `<div class="item"><div class="q small"><span class="tiny muted">${esc(q.typ)}</span><br>${esc(q.frage)}${q.optionen?`<div>${q.optionen.map((o,oi)=>`<span class="opt ${(Array.isArray(q.richtig)?q.richtig.includes(oi):q.richtig===oi)?"right":""}">${esc(o)}</span>`).join("")}</div>`:q.beleg?`<div class="tiny muted">Lösung: der markierte Satz im Text.</div>`:""}</div>${res?`<span class="pill ${res[1]?"ok":"no"}">${res[1]?"✓":"✗"}</span>`:""}</div>`;}).join("")}</div></details>`;}).join("")}
@@ -604,7 +716,7 @@ function vEntwicklung(){
   if(lm){
     const H=lm.hist||{};
     const roll=k=>X.map(d=>{const s=histSum(H,addDays(d,-6),d)[k];return s[1]>=6?pct(s[0],s[1]):null;});
-    h+=`<div class="sec"><h2>Trefferquote</h2><div class="card"><p class="small muted">Anteil richtiger Antworten, gleitend über 7 Tage.</p>
+    if(!KID())h+=`<div class="sec"><h2>Trefferquote</h2><div class="card"><p class="small muted">Anteil richtiger Antworten, gleitend über 7 Tage.</p>
       ${lineChart({x:XL,ymin:0,ymax:100,ticks:[0,50,100],unit:" %",series:["m","e","d"].map(k=>({name:SUBJ[k],c:COL[k],v:roll(k)})),label:"Trefferquote je Fach"})}</div></div>`;
     h+=`<div class="sec"><h2>Übungsmenge</h2><div class="card"><p class="small muted">Beantwortete Aufgaben pro Tag in Lern-Match.</p>
       ${barChart({x:XL,series:["m","e","d"].map(k=>({name:SUBJ[k],c:COL[k],v:X.map(d=>(H[d]&&H[d][k])?H[d][k][1]:0)})),label:"Aufgaben pro Tag"})}${legend(["m","e","d"].map(k=>[SUBJ[k],COL[k]]))}</div></div>`;
@@ -634,7 +746,7 @@ function vEntwicklung(){
       ${lineChart({x:tbe.map(e=>dLabel(e.occurred_at.slice(0,10))),dots:true,series:[{name:"Wörter",c:"var(--w)",v:tbe.map(e=>e.value.woerter||0)},{name:"Fehler",c:"var(--warn)",v:tbe.map(e=>e.value.fehler||0)}],label:"Tie-Break"})}
       <p class="note">Ein Punkt pro Tie-Break. Gutes Zeichen: mehr Wörter bei gleich vielen oder weniger Fehlern – und mehr selbst gefundene Fehler.</p></div></div>`;}
   /* Wochentabelle */
-  if(lm){const H=lm.hist||{},days=trainDays(),wk={};
+  if(lm&&!KID()){const H=lm.hist||{},days=trainDays(),wk={};
     Object.keys(days).concat(Object.keys(H)).forEach(d=>{if(d<start)return;const w=mondayOf(d);wk[w]=wk[w]||{days:new Set(),n:0,s:{m:[0,0],e:[0,0],d:[0,0]},slams:0};if(days[d])wk[w].days.add(d);});
     Object.keys(H).forEach(d=>{const w=mondayOf(d);if(!wk[w])return;["m","e","d"].forEach(k=>{const v=H[d][k];if(v){wk[w].s[k][0]+=v[0];wk[w].s[k][1]+=v[1];wk[w].n+=v[1];}});});
     Object.keys(lm.slams||{}).forEach(d=>{const w=mondayOf(d);if(wk[w])wk[w].slams++;});
@@ -644,28 +756,316 @@ function vEntwicklung(){
   return h;
 }
 
+/* =====================================================================
+   Lernweg und Manifest – gemeinsame Dokumente der Familie
+   Fassungen liegen in family_docs, Zustimmungen in doc_approvals.
+   Eine Fassung gilt, wenn alle Familienmitglieder zugestimmt haben.
+   ===================================================================== */
+const KID=()=>!!(S.me&&S.me.role==="child");
+const memName=id=>{const m=S.members.find(x=>x.id===id);return m?m.display_name:"Claude";};
+const firstName=()=>esc(S.kid?S.kid.display_name:"Philip");
+const DOCS={
+  manifest:{name:"Manifest",
+    texts:[["intro_eltern","Einleitung zu unseren Versprechen"],["intro_kind","Einleitung zu Philips Teil"]],
+    secs:[{k:"eltern",n:"Wir an Philip",f:[["t","Versprechen"],["d","Was das heißt",1]]},
+          {k:"kind",n:"Philip an uns",f:[["t","Satz"],["d","Was das heißt",1]]}]},
+  lernweg:{name:"Lernweg",station:true,
+    secs:[{k:"stationen",n:"Die drei Stationen",fixed:true,f:[["t","Name"],["d","Kurz"],["w","Worum es geht",1],["p","Philip …",1],["u","Wir …",1],["n","Weiter, wenn …",1]]},
+          {k:"leitsaetze",n:"Leitsätze",f:[["t","Satz"],["d","Erklärung",1]]},
+          {k:"regeln",n:"KI-Regeln",f:[["t","Regel"],["d","Warum",1]]},
+          {k:"signale",n:"Woran wir merken, dass es klappt",f:[["t","Signal",1]]}]}
+};
+function docState(doc){
+  const vs=S.docs.filter(v=>v.doc===doc).sort((a,b)=>a.id-b.id);
+  const ap=id=>S.appr.filter(a=>a.version_id===id).map(a=>a.member_id);
+  const full=v=>S.members.length&&S.members.every(m=>ap(v.id).includes(m.id));
+  let cur=null;vs.forEach(v=>{if(full(v))cur=v;});
+  const latest=vs[vs.length-1]||null,pending=latest&&latest!==cur?latest:null;
+  return {vs,cur,pending,latest,ap,full,shown:cur||latest};
+}
+const clone=o=>JSON.parse(JSON.stringify(o||{}));
+const fmtDT=s=>new Date(s).toLocaleString("de-DE",{day:"numeric",month:"numeric",year:"2-digit",hour:"2-digit",minute:"2-digit"});
+
+async function docApprove(id){
+  try{await FS.rest("/rest/v1/doc_approvals",{method:"POST",headers:{Prefer:"return=minimal"},body:{version_id:id,member_id:S.me.id}});
+    S.appr.push({version_id:id,member_id:S.me.id,approved_at:new Date().toISOString()});S.lwMsg=null;}
+  catch(e){S.lwMsg="Zustimmen ging gerade nicht: "+e.message;}
+  render();
+}
+async function docUnapprove(id){
+  try{await FS.rest("/rest/v1/doc_approvals?version_id=eq."+id+"&member_id=eq."+S.me.id,{method:"DELETE",headers:{Prefer:"return=minimal"}});
+    S.appr=S.appr.filter(a=>!(a.version_id===id&&a.member_id===S.me.id));}
+  catch(e){S.lwMsg="Ging gerade nicht: "+e.message;}
+  render();
+}
+async function docPropose(){
+  const E=S.edit;if(!E)return;
+  try{
+    const r=await FS.rest("/rest/v1/family_docs",{method:"POST",headers:{Prefer:"return=representation"},body:{family_id:S.me.family_id,doc:E.doc,content:E.draft,note:(E.note||"").trim().slice(0,300)||null,created_by:S.me.id}});
+    const v=r&&r[0];if(v){S.docs.push(v);S.edit=null;await docApprove(v.id);return;}
+  }catch(e){S.lwMsg="Speichern ging gerade nicht: "+e.message;}
+  render();
+}
+/* Status, Zustimmen, Ändern, Verlauf – für beide Dokumente gleich */
+function docBar(doc){
+  const D=docState(doc),me=S.me.id,v=D.pending||D.cur||D.latest;if(!v)return"";
+  const names=id=>S.members.map(m=>`<span class="who ${D.ap(id).includes(m.id)?"yes":""}">${D.ap(id).includes(m.id)?"✓":"○"} ${esc(m.display_name)}</span>`).join("");
+  let h="";
+  if(D.pending){const p=D.pending,mine=D.ap(p.id).includes(me);
+    h+=`<div class="lw-banner"><p><b>${D.cur?"Neuer Vorschlag":"Entwurf"}</b> von ${esc(memName(p.created_by))} · ${fmtDT(p.created_at)}${p.note?`<br><span class="muted">„${esc(p.note)}“</span>`:""}</p>
+      <p class="small" style="margin-top:6px">Gilt, wenn alle zugestimmt haben: ${names(p.id)}</p>
+      <div class="row-btn">${mine?`<button class="btn ghost" data-lw="unappr" data-id="${p.id}">Zustimmung zurückziehen</button>`:`<button class="btn sm" data-lw="appr" data-id="${p.id}">${KID()?"Ich bin einverstanden":"Zustimmen"}</button>`}
+      ${D.cur?`<button class="btn ghost" data-lw="view" data-doc="${doc}" data-id="${S.viewV[doc]===p.id?"":p.id}">${S.viewV[doc]===p.id?"Gültige Fassung zeigen":"Vorschlag ansehen"}</button>`:""}</div></div>`;}
+  else h+=`<div class="lw-ok"><span>✓ Gilt seit ${fmtDT(D.cur.created_at)} – alle haben zugestimmt.</span></div>`;
+  h+=`<div class="row-btn" style="margin-top:10px"><button class="btn ghost" data-lw="edit" data-doc="${doc}">✎ Ändern vorschlagen</button><button class="btn ghost" data-lw="hist" data-doc="${doc}">Verlauf (${D.vs.length})</button></div>`;
+  if(S.lwMsg)h+=`<p class="err" style="margin-top:6px">${esc(S.lwMsg)}</p>`;
+  if(S.hist===doc)h+=`<div class="card" style="margin-top:10px">${D.vs.slice().reverse().map(x=>{const st=x===D.cur?'<span class="pill ok">gilt</span>':x===D.pending?'<span class="pill">Vorschlag</span>':D.cur&&x.id<D.cur.id?'<span class="pill">frühere Fassung</span>':'<span class="pill">nicht übernommen</span>';
+    return `<div class="item"><div class="q small"><b>${fmtDT(x.created_at)}</b> · ${esc(memName(x.created_by))} ${st}${x.note?`<br><span class="muted">${esc(x.note)}</span>`:""}<br><span class="tiny muted">Zugestimmt: ${D.ap(x.id).map(memName).map(esc).join(", ")||"noch niemand"}</span></div><button class="btn ghost" data-lw="view" data-doc="${doc}" data-id="${x.id}">Ansehen</button></div>`;}).join("")}</div>`;
+  return h;
+}
+function docContent(doc){
+  const D=docState(doc),id=S.viewV[doc],v=(id&&D.vs.find(x=>x.id===id))||D.shown;
+  return {v,c:v?v.content:{},base:D.cur&&v!==D.cur?D.cur.content:null,viewing:id&&v!==D.shown};
+}
+const changed=(base,sec,i,it)=>{if(!base)return"";const b=(base[sec]||[])[i];return !b?' <span class="pill">neu</span>':JSON.stringify(b)!==JSON.stringify(it)?' <span class="pill">geändert</span>':"";};
+const removedNote=(base,c,sec)=>{if(!base)return"";const n=(base[sec]||[]).length-(c[sec]||[]).length;return n>0?`<p class="tiny muted">${n} Punkt${n>1?"e":""} gestrichen.</p>`:"";};
+
+/* ---------- Editor ---------- */
+function vEditor(){
+  const E=S.edit,Dd=DOCS[E.doc],d=E.draft;
+  const inp=(path,val,long,lbl)=>long?`<label class="ed-l">${esc(lbl)}<textarea class="inp ed" rows="3" data-ed="${path}">${esc(val||"")}</textarea></label>`:`<label class="ed-l">${esc(lbl)}<input class="inp ed" data-ed="${path}" value="${esc(val||"")}"></label>`;
+  let h=`<div class="sec"><div class="card stack"><h2>${esc(Dd.name)} ändern</h2><p class="small muted">Deine Änderungen werden ein Vorschlag. Er gilt, sobald alle zugestimmt haben. Die bisherige Fassung bleibt im Verlauf.</p></div></div>`;
+  (Dd.texts||[]).forEach(([k,l])=>{h+=`<div class="sec"><div class="card">${inp("t|"+k,d[k],1,l)}</div></div>`;});
+  if(Dd.station)h+=`<div class="sec"><div class="card"><p class="small"><b>Wo stehen wir gerade?</b></p><div class="chips" style="flex-wrap:wrap">${(d.stationen||[]).map((s,i)=>`<button class="chip ${d.aktuell===i?"on":""}" data-ed-st="${i}">${i+1}. ${esc(s.t)}</button>`).join("")}</div></div></div>`;
+  Dd.secs.forEach(sec=>{const list=d[sec.k]||[];
+    h+=`<div class="sec"><h2>${esc(sec.n)}</h2><div class="card">${list.map((it,i)=>`<div class="ed-item"><div class="ed-num">${i+1}</div><div style="flex:1;min-width:0" class="stack-s">${sec.f.map(([f,l,long])=>inp(sec.k+"|"+i+"|"+f,it[f],long,l)).join("")}</div>${sec.fixed?"":`<div class="ed-ctl"><button class="iconbtn" data-ed-up="${sec.k}|${i}" aria-label="Nach oben">↑</button><button class="iconbtn" data-ed-del="${sec.k}|${i}" aria-label="Streichen">✕</button></div>`}</div>`).join("")}
+      ${sec.fixed?"":`<button class="btn ghost" data-ed-add="${sec.k}">+ Punkt dazu</button>`}</div></div>`;});
+  h+=`<div class="sec"><div class="card stack">${inp("note",E.note,1,"Was hast du geändert und warum? (für den Verlauf)")}
+    <div class="row-btn"><button class="btn sm" data-lw="save">Als Vorschlag speichern</button><button class="btn ghost" data-lw="cancel">Abbrechen</button></div>
+    ${S.lwMsg?`<p class="err">${esc(S.lwMsg)}</p>`:""}</div></div>`;
+  return h;
+}
+
+/* ---------- Manifest ---------- */
+function vManifest(){
+  if(S.edit&&S.edit.doc==="manifest")return vEditor();
+  const {c,base,viewing,v}=docContent("manifest");if(!v)return `<div class="empty" style="margin-top:14px">Noch kein Manifest angelegt.</div>`;
+  const list=(sec,cls)=>(c[sec]||[]).map((it,i)=>`<div class="mf-item ${cls}"><span class="mf-n">${i+1}</span><div><p><b>${esc(it.t)}</b>${changed(base,sec,i,it)}</p>${it.d?`<p class="small muted" style="margin-top:2px">${esc(it.d)}</p>`:""}</div></div>`).join("")+removedNote(base,c,sec);
+  const kidDraft=docState("manifest").cur===null;
+  return `<div class="sec"><div class="hero"><p class="kicker" style="color:var(--gold)">Gegenseitig</p><h2 class="hero-h">Was wir uns versprechen</h2>
+      <p class="hero-p">Ein Manifest für unseren Lernweg: was ${KID()?"Mama und Papa dir":"wir Philip"} versprechen und was ${KID()?"du dir von ihnen wünschst":"Philip sich von uns wünscht"}. Es gilt, wenn alle zugestimmt haben, und darf sich mit unseren Erfahrungen verändern.</p></div></div>
+    ${viewing?`<p class="lw-banner small" style="margin-top:12px">Du siehst eine andere Fassung als die gültige. <button class="linkbtn" data-lw="view" data-doc="manifest" data-id="">Zurück zur aktuellen</button></p>`:""}
+    <div class="sec">${docBar("manifest")}</div>
+    <div class="sec"><h2>${KID()?"Mama und Papa an dich":"Wir an Philip"}</h2><div class="card">${c.intro_eltern?`<p class="small muted" style="margin-bottom:8px">${esc(c.intro_eltern)}</p>`:""}${list("eltern","p")}</div></div>
+    <div class="sec"><h2>${KID()?"Du an Mama und Papa":"Philip an uns"}</h2><div class="card">${c.intro_kind?`<p class="small" style="margin-bottom:8px;color:var(--gold-ink)">${esc(c.intro_kind)}</p>`:""}${list("kind","k")}
+      ${kidDraft?`<p class="note">${KID()?"Das sind Vorschläge. Tippe oben auf „Ändern vorschlagen“ und mach es zu deinem Text.":"Philips Teil ist ein Entwurf in seiner Sprache. Er streicht, ändert und ergänzt ihn mit euch, bis es seiner ist."}</p>`:""}</div></div>
+    <div class="sec"><h2>Was wir unterwegs merken</h2>${notesHTML("manifest")}</div>`;
+}
+
+/* ---------- Erfahrungen (Notizen) ---------- */
+function notesHTML(topic){
+  const N=S.notes.filter(n=>n.topic===topic);
+  return `<div class="card stack"><p class="small muted">${topic==="manifest"?"Was hat geklappt, was nicht? Daraus werden Änderungsvorschläge.":"Beobachtungen auf dem Weg. Sie helfen, Stationen und Regeln anzupassen."}</p>
+    <form class="note-form" data-topic="${topic}"><textarea class="inp" rows="2" maxlength="1000" placeholder="${KID()?"Was ist dir aufgefallen?":"Was ist uns aufgefallen?"}" required></textarea><button class="btn sm" type="submit">Notieren</button></form>
+    ${N.length?N.map(n=>`<div class="item"><div class="q small"><b>${esc(memName(n.member_id))}</b> <span class="tiny muted">${fmtDT(n.created_at)}</span><br>${esc(n.body)}</div>${n.member_id===S.me.id||S.me.role==="parent"?`<button class="iconbtn" data-lw="ndel" data-id="${n.id}" aria-label="Löschen">✕</button>`:""}</div>`).join(""):'<p class="tiny muted">Noch nichts notiert.</p>'}</div>`;
+}
+async function noteAdd(topic,body){
+  try{const r=await FS.rest("/rest/v1/family_notes",{method:"POST",headers:{Prefer:"return=representation"},body:{family_id:S.me.family_id,member_id:S.me.id,topic,body:body.slice(0,1000)}});if(r&&r[0])S.notes.unshift(r[0]);S.lwMsg=null;}
+  catch(e){S.lwMsg="Notieren ging gerade nicht: "+e.message;}
+  render();
+}
+async function noteDel(id){
+  try{await FS.rest("/rest/v1/family_notes?id=eq."+id,{method:"DELETE",headers:{Prefer:"return=minimal"}});S.notes=S.notes.filter(n=>n.id!==+id);}catch(e){S.lwMsg=e.message;}
+  render();
+}
+
+/* ---------- Der Weg ---------- */
+const WSUBS=[["weg","Der Weg"],["philip","Für Philip"],["eltern","Für Eltern"]];
+function vWeg(){
+  if(S.edit&&S.edit.doc==="lernweg")return vEditor();
+  const body={weg:wegWeg,philip:wegPhilip,eltern:wegEltern}[S.wsub]||wegWeg;
+  return `<div class="chips" style="margin-top:6px">${WSUBS.map(([k,n])=>`<button class="chip ${S.wsub===k?"on":""}" data-wsub="${k}">${k==="philip"&&KID()?"Für dich":n}</button>`).join("")}</div>${body()}`;
+}
+function wegWeg(){
+  const {c,base,viewing}=docContent("lernweg");const st=c.stationen||[],ak=c.aktuell||0,sel=S.station==null?ak:S.station,s=st[sel]||{};
+  const steer=[[62,38],[42,58],[14,86]];
+  return `<div class="sec"><div class="hero"><p class="kicker" style="color:var(--gold)">Unser Plan als Familie</p><h2 class="hero-h">Hilf mir, es <span style="color:var(--gold)">selbst</span> zu tun.</h2><p class="tiny" style="opacity:.7">Maria Montessori</p>
+      <p class="hero-p">Die Apps sind der Anfang. Das Ziel ist größer: ${KID()?"Du weißt":"Philip weiß"}, wie ${KID()?"du dir":"er sich"} Wissen selbst holst${KID()?"":""}, ordnest und behältst. Die KI hilft dabei, aber sie denkt nicht für ${KID()?"dich":"ihn"}.</p>
+      <div class="steer"><p class="tiny" style="opacity:.75;font-weight:700;letter-spacing:.06em">WER STEUERT DAS LERNEN?</p>${steer.map((x,i)=>`<div class="steer-row"><b>Station ${i+1}</b><div class="steer-bar"><i style="width:${x[0]}%;background:rgba(255,255,255,.3)"></i><i style="width:${x[1]}%;background:var(--gold)"></i></div></div>`).join("")}
+      <p class="tiny" style="opacity:.75"><span class="sw" style="background:rgba(255,255,255,.3)"></span> Eltern <span class="sw" style="background:var(--gold)"></span> ${KID()?"du":"Philip"} · Schritt für Schritt mehr ${KID()?"du":"Philip"}</p></div></div></div>
+    ${viewing?`<p class="lw-banner small" style="margin-top:12px">Du siehst eine andere Fassung als die gültige. <button class="linkbtn" data-lw="view" data-doc="lernweg" data-id="">Zurück zur aktuellen</button></p>`:""}
+    <div class="sec"><h2>Drei Stationen</h2><div class="stations">${st.map((x,i)=>`<button class="station ${i===sel?"on":""}" data-station="${i}"><span class="st-top"><span class="st-num">${i+1}</span><span class="pill ${i===ak?"ok":""}">${i<ak?"geschafft":i===ak?"Jetzt":i===st.length-1?"Das Ziel":"Als Nächstes"}</span></span><b>${esc(x.t)}</b>${changed(base,"stationen",i,x)}<span class="small muted">${esc(x.d||"")}</span></button>`).join("")}</div>
+      <div class="card" style="margin-top:10px"><h3>${esc(s.t||"")}</h3><p class="small muted" style="margin-top:4px">${esc(s.w||"")}</p>
+        <div class="st-grid"><div><p class="tiny klbl">${KID()?"DU":"PHILIP"}</p><p class="small">${esc(s.p||"")}</p></div><div><p class="tiny klbl">${KID()?"MAMA UND PAPA":"WIR"}</p><p class="small">${esc(s.u||"")}</p></div><div><p class="tiny klbl">${sel===st.length-1?"ERREICHT, WENN":"WEITER, WENN"}</p><p class="small">${esc(s.n||"")}</p></div></div></div></div>
+    <div class="sec"><h2>Drei Sätze für unterwegs</h2><div class="stack">${(c.leitsaetze||[]).map((x,i)=>`<div class="card"><h3>${esc(x.t)}${changed(base,"leitsaetze",i,x)}</h3><p class="small muted" style="margin-top:4px">${esc(x.d||"")}</p></div>`).join("")}${removedNote(base,c,"leitsaetze")}</div></div>
+    <div class="sec"><h2>Woran wir merken, dass es klappt</h2><div class="card">${(c.signale||[]).map((x,i)=>`<div class="item"><div class="q small">👁 ${esc(x.t)}${changed(base,"signale",i,x)}</div></div>`).join("")}${removedNote(base,c,"signale")}</div></div>
+    <div class="sec"><h2>Weg anpassen</h2>${docBar("lernweg")}<p class="note">Stationen, Leitsätze, KI-Regeln und Signale sind gemeinsam änderbar. Eine neue Fassung gilt, wenn alle zugestimmt haben.</p></div>
+    <div class="sec"><h2>Was wir unterwegs merken</h2>${notesHTML("lernweg")}</div>`;
+}
+
+/* ---------- Für Philip: Forscher-Pass, Regeln, Werkzeugkiste, Werkstatt ---------- */
+const LWS=()=>{const d=(S.P.lernweg||{}).data||{};return {rules:d.rules||[],tried:d.tried||[],projects:d.projects||[]};};
+async function lwSave(st){
+  if(!KID())return;S.P.lernweg={data:Object.assign({},st,{savedAt:Date.now()}),updated_at:new Date().toISOString()};render();
+  try{await FS.push("lernweg",S.P.lernweg.data);}catch(e){S.lwMsg="Speichern ging gerade nicht – Internet?";render();}
+}
+const STAMPS=[{k:"regel",t:"Regel-Kenner",i:"🛡️",ok:s=>s.rules.length>=5},{k:"trick",t:"Trick-Tester",i:"🧪",ok:s=>s.tried.length>=3},{k:"projekt",t:"Projekt-Starter",i:"🚀",ok:s=>s.projects.length>=1},{k:"erfinder",t:"Erfinder",i:"⭐",ok:s=>s.projects.some(p=>p.s===2)}];
+const AREAS={lt:"Lerntechniken",ss:"Starkes Selbst",kd:"Kreatives Denken",tp:"Teamplay"};
+const TIERS=[{k:"stark",n:3,t:"Super-Tricks",s:"Wirken am stärksten"},{k:"gut",n:2,t:"Hilft gut",s:"Lohnt sich"},{k:"falle",n:1,t:"Bringt wenig",s:"Fühlt sich nur fleißig an"}];
+const TOOLS=[
+  {k:"abfragen",tier:"stark",a:"lt",i:"❓",t:"Sich selbst abfragen",d:"Buch zu und aus dem Kopf holen",what:"Statt nochmal zu lesen, klappst du das Buch zu und versuchst, alles aus dem Kopf zu holen. Genau dieses Hervorholen speichert das Wissen fest.",steps:["Lies einen Abschnitt oder eine Heftseite.","Buch zu. Schreib auf oder sag laut, was du noch weißt.","Vergleiche. Was gefehlt hat, kommt auf eine Karteikarte."],mission:"Blatt-Challenge: Schreib in 2 Minuten alles auf, was du über dein letztes Schulthema weißt.",w:{type:"timer",sec:120},fits:"Lern-Match und Testtrainer"},
+  {k:"oft",tier:"stark",a:"lt",i:"📅",t:"Kurz und oft üben",d:"Viermal kurz schlägt einmal lang",what:"Dein Gehirn behält Dinge besser, wenn du sie mit Pausen dazwischen wiederholst. Lieber jeden Tag ein bisschen als einmal ganz viel am Abend vor der Arbeit.",steps:["Plane zehn Minuten am Tag für ein Fach.","Wiederhole am nächsten Tag und dann nach ein paar Tagen.","Vor der Klassenarbeit musst du nur noch auffrischen."],mission:"Lern-Sprint: Zehn Minuten volle Konzentration, danach ist Pause.",w:{type:"timer",sec:600},fits:"jeden Tag eine Runde Lern-Match"},
+  {k:"erklaeren",tier:"gut",a:"tp",i:"💬",t:"Erklären",d:"Sei mal der Lehrer",what:"Wer etwas erklären muss, merkt sofort, was er schon kann und wo es noch hakt. Und wer erklärt, lernt dabei am meisten.",steps:["Such dir ein Thema aus der Schule aus.","Erklär es Mama, Papa oder einem Freund in zwei Minuten.","Wo du stockst, schaust du nochmal nach."],mission:"Abendessen-Erklärer: Heute Abend erklärst du uns eine Sache aus der Schule. Zwei Minuten, dann dürfen wir Fragen stellen.",fits:"Spürnase: erzähl uns, was du gelesen hast"},
+  {k:"warum",tier:"gut",a:"kd",i:"🔍",t:"Warum-Fragen stellen",d:"Wie ein Detektiv nachhaken",what:"Wenn du fragst, warum etwas so ist und wie es zusammenhängt, verknüpft dein Gehirn das Neue mit dem, was du schon weißt. So bleibt es hängen.",steps:["Nimm einen Satz aus deinem Heft.","Frag: Warum ist das so? Was wäre, wenn nicht?","Überleg dir selbst eine Antwort, dann prüf sie nach."],mission:"Würfle eine Forscher-Frage und wende sie auf dein aktuelles Thema an.",w:{type:"dice"},fits:"die KI als Fragensteller statt Antwortgeber"},
+  {k:"zusammen",tier:"gut",a:"tp",i:"👥",t:"Mit anderen üben",d:"Gegenseitig abfragen",what:"Zusammen üben macht mehr Spaß und hilft beiden: Wer fragt, muss die Antwort kennen. Wer antwortet, holt sein Wissen hervor.",steps:["Jeder schreibt fünf Fragen zum gleichen Thema.","Tauscht und fragt euch gegenseitig ab.","Wer falsch liegt, dem erklärt der andere die Antwort."],mission:"Frage-Duell: Verabrede dich diese Woche mit einem Freund für eine Runde gegenseitiges Abfragen.",fits:"Lern-Match zu zweit"},
+  {k:"fehler",tier:"gut",a:"ss",i:"💡",t:"Fehler als Helfer",d:"Fehler zeigen, wo es weitergeht",what:"Ein Fehler ist kein Beinbruch, sondern ein Wegweiser. Wer seine Fehler anschaut und verbessert, merkt sich die richtige Antwort besser.",steps:["Fehler nicht wegradieren, sondern markieren.","Herausfinden: Was wäre richtig, und warum ist der Fehler passiert?","Genau das am nächsten Tag nochmal üben."],mission:"Fehler-Detektiv: Such in „Mein Stand“ einen Fehler aus dieser Woche und finde heraus, warum er passiert ist.",fits:"Aufgaben: deine falschen Antworten ansehen"},
+  {k:"markieren",tier:"falle",a:"lt",i:"🖍️",t:"Bunt markieren",d:"Sieht fleißig aus",what:"Markieren fühlt sich nach Arbeit an, aber dein Gehirn muss dabei kaum etwas tun. Am Ende ist die Seite bunt, im Kopf bleibt wenig.",steps:["Markiere höchstens ein Wort pro Absatz.","Mach daraus sofort eine Frage für eine Karteikarte.","Dann: Buch zu und selbst abfragen."],alt:"abfragen"},
+  {k:"lesen",tier:"falle",a:"lt",i:"📖",t:"Immer wieder durchlesen",d:"Fühlt sich nach Können an",what:"Beim dritten Lesen kommt dir alles bekannt vor. Bekannt heißt aber nicht gekonnt: Ohne Buch fällt es dir dann oft nicht ein.",steps:["Einmal gründlich lesen reicht.","Danach nicht nochmal lesen, sondern abfragen.","Nur nachlesen, was du nicht wusstest."],alt:"abfragen"}];
+const DICE=["Warum ist das so?","Was wäre, wenn es anders wäre?","Wo begegnet mir das im Alltag?","Wie würde ich das einem Erstklässler erklären?","Was hat das mit etwas zu tun, das ich schon kenne?","Welche Frage würde meine Lehrerin dazu im Test stellen?","Wie könnte man das in Minecraft zeigen?","Was ist das Wichtigste daran, in einem Satz?"];
+const IDEAS=[{k:"quiz",i:"❓",t:"Eigene Quizfragen",d:"Fragen für Lern-Match selbst schreiben",was:"10 Quizfragen für Lern-Match schreiben"},{k:"mc",i:"🧱",t:"Minecraft-Projekt",d:"Ein Schulthema in Minecraft nachbauen",was:"Das Thema in Minecraft nachbauen"},{k:"video",i:"🎬",t:"Erklärvideo",d:"Zwei Minuten, ein Thema, du erklärst",was:"Ein Erklärvideo von 2 Minuten drehen"},{k:"tagebuch",i:"📓",t:"Entdecker-Seite",d:"Eine Seite im Reisetagebuch gestalten",was:"Eine Entdecker-Seite im Reisetagebuch gestalten"},{k:"eigen",i:"➕",t:"Eigene Idee",d:"Du hast etwas anderes vor? Super.",was:"",own:true}];
+const PSTATUS=["Geplant","Läuft","Fertig"];
+const UIW={rule:{},tool:"abfragen",filter:"alle",idea:"mc",who:["Mama","Papa"],due:"nächste Woche",timer:null,dice:null,thema:"",was:"Das Thema in Minecraft nachbauen"};
+const battery=n=>`<span class="batt">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
+function wegPhilip(){
+  const st=LWS(),c=docContent("lernweg").c,rules=c.regeln||[],ro=!KID(),n=STAMPS.filter(s=>s.ok(st)).length;
+  const t=TOOLS.find(x=>x.k===UIW.tool)||TOOLS[0],tier=TIERS.find(x=>x.k===t.tier),done=st.tried.includes(t.k);
+  const fmtT=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+  let h=`<div class="sec"><div class="hero"><p class="kicker" style="color:var(--gold)">${KID()?"Für dich":"Für Philip"}</p><h2 class="hero-h">${KID()?"Du bist":"Philip ist"} der <span style="color:var(--gold)">Forscher</span>. Die KI ist ${KID()?"dein":"sein"} Assistent.</h2>
+    <p class="hero-p">Eine KI kann ${KID()?"dir":"ihm"} die Hausaufgaben schreiben. Dann kann sie es und ${KID()?"du":"er"} nicht. Hier ${KID()?"lernst du":"lernt er"} in drei Schritten, wie ${KID()?"du":"er"} selbst schlauer ${KID()?"wirst":"wird"}. Für jeden Schritt gibt es einen Stempel.</p>
+    <div class="stamps">${STAMPS.map(s=>`<div class="stamp ${s.ok(st)?"on":""}"><span class="ring">${s.i}</span>${esc(s.t)}</div>`).join("")}</div>
+    <div class="passbar"><i style="width:${n/4*100}%"></i></div><p class="tiny" style="opacity:.8;font-weight:700">${n===4?"Alle 4 Stempel! Echter Forscher.":n+" von 4 Stempeln"}</p></div></div>
+    ${ro?`<p class="note">So sieht ${firstName()} seinen Bereich. Stempel, ausprobierte Tricks und Projekte trägt er selbst ein – ihr seht hier seinen Stand.</p>`:""}
+    ${S.lwMsg?`<p class="err">${esc(S.lwMsg)}</p>`:""}
+    <div class="sec"><h2>1 · ${KID()?"Deine":"Die"} KI-Regeln <span class="small muted" style="font-weight:400">${st.rules.length} von ${rules.length} entdeckt</span></h2><p class="small muted" style="margin:-4px 0 8px 2px">Tippe auf jede Karte. Die Regeln gelten für die ganze Familie. Papa auch.</p>
+      <div class="rules">${rules.map((r,i)=>{const on=UIW.rule[i],seen=st.rules.includes(i);return `<button class="rule ${on?"on":""}" data-rule="${i}"><span class="rn">${i+1}</span><b>${esc(r.t)}</b>${on?`<span class="small">${esc(r.d||"")}</span>`:`<span class="tiny muted">${seen?"Entdeckt ✓":"Warum?"}</span>`}</button>`;}).join("")}</div></div>
+    <div class="sec"><h2>2 · Lern-Tricks ausprobieren <span class="small muted" style="font-weight:400">${st.tried.length} ausprobiert</span></h2>
+      <div class="chips"><button class="chip ${UIW.filter==="alle"?"on":""}" data-filter="alle">Alle</button>${Object.entries(AREAS).map(([k,n])=>`<button class="chip ${UIW.filter===k?"on":""}" data-filter="${k}">${n}</button>`).join("")}</div>
+      <p class="tiny muted" style="margin:0 0 8px 2px">Die Bereiche passen zum Video-Lerntraining.</p>
+      ${TIERS.map(tr=>{const items=TOOLS.filter(x=>x.tier===tr.k&&(UIW.filter==="alle"||x.a===UIW.filter));if(!items.length)return"";
+        return `<div class="tier tier-${tr.k}"><p class="small"><b>${battery(tr.n)} ${tr.t}</b> <span class="muted">· ${tr.s}</span></p><div class="tools">${items.map(x=>`<button class="tool ${x.k===t.k?"on":""} ${x.tier==="falle"?"trap":""}" data-tool="${x.k}"><span class="ti">${x.i}</span><span><b>${esc(x.t)}</b><br><span class="tiny muted">${esc(x.d)}</span></span>${st.tried.includes(x.k)?'<span class="chk">✓</span>':""}</button>`).join("")}</div></div>`;}).join("")}
+      <div class="card" id="tool-detail" style="margin-top:12px"><p class="small"><span class="pill">${battery(tier.n)} ${tier.t}</span> <span class="pill">${AREAS[t.a]}</span></p><h3 style="margin-top:6px">${esc(t.t)}</h3><p class="small" style="margin-top:4px">${esc(t.what)}</p>
+        <p class="tiny klbl" style="margin-top:10px">${t.tier==="falle"?"MACH ES SO BESSER":"SO GEHT'S"}</p><ol class="small steps">${t.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+        ${t.tier==="falle"?`<div class="mission"><p class="tiny" style="color:var(--gold);font-weight:800">DER BESSERE TRICK</p><p>Probier stattdessen „Sich selbst abfragen“. Das wirkt viel stärker.</p><button class="btn sm" data-tool="${t.alt}">Zum besseren Trick</button></div>`
+        :`<div class="mission"><p class="tiny" style="color:var(--gold);font-weight:800">PROBIER'S JETZT</p><p>${esc(t.mission)}</p>
+          ${t.w&&t.w.type==="timer"?`<div class="clock" id="clock">${UIW.timer&&UIW.timer.k===t.k?(UIW.timer.left<=0?"Geschafft!":fmtT(UIW.timer.left)):fmtT(t.w.sec)}</div><div class="row-btn"><button class="btn sm" data-timer="go">${UIW.timer&&UIW.timer.k===t.k&&UIW.timer.id?"Pause":"Start"}</button><button class="btn ghost light" data-timer="reset">Zurück auf ${fmtT(t.w.sec)}</button></div>`:""}
+          ${t.w&&t.w.type==="dice"?`<p class="dice">${esc(UIW.dice||"Tippe auf Würfeln.")}</p><button class="btn sm" data-dice="1">Würfeln</button>`:""}</div>
+          <p class="small muted" style="margin-top:10px">Passt zu: <b style="color:var(--ink)">${esc(t.fits||"")}</b></p>
+          ${ro?(done?`<p class="small" style="color:var(--good);margin-top:6px">✓ ${firstName()} hat das ausprobiert.</p>`:""):`<button class="btn ${done?"ghost":"sm"}" style="margin-top:10px" data-tried="${t.k}">${done?"✓ Ausprobiert":"Hab ich ausprobiert"}</button>`}`}</div></div>
+    <div class="sec"><h2>3 · Eigenes Projekt starten</h2>`;
+  if(!ro){const idea=IDEAS.find(x=>x.k===UIW.idea);
+    h+=`<p class="small muted" style="margin:-4px 0 8px 2px">Such dir eine Idee aus, plane sie in vier Schritten und stell sie vor, wenn sie fertig ist.</p>
+      <div class="ideas">${IDEAS.map(x=>`<button class="idea ${x.k===UIW.idea?"on":""} ${x.own?"own":""}" data-idea="${x.k}"><span class="ti">${x.i}</span><b>${esc(x.t)}</b><span class="tiny muted">${esc(x.d)}</span></button>`).join("")}</div>
+      <form class="card stack" id="planner" style="margin-top:10px"><h3>${idea.own?"Deine eigene Idee":"Idee: "+esc(idea.t)}</h3>
+        <label class="ed-l"><span><b>1</b> · Welches Thema?</span><input class="inp" id="p-thema" maxlength="60" placeholder="z. B. Die Römer, Vulkane, Brüche" value="${esc(UIW.thema)}"></label>
+        <label class="ed-l"><span><b>2</b> · Was baust oder machst du?</span><input class="inp" id="p-was" maxlength="80" placeholder="${idea.own?"Was hast du vor?":""}" value="${esc(UIW.was)}"></label>
+        <div class="ed-l"><span><b>3</b> · Wem stellst du es vor?</span><div class="chips" style="flex-wrap:wrap">${["Mama","Papa","Freunden","der Klasse","Oma und Opa"].map(w=>`<button type="button" class="chip ${UIW.who.includes(w)?"on":""}" data-who="${w}">${w}</button>`).join("")}</div></div>
+        <div class="ed-l"><span><b>4</b> · Bis wann?</span><div class="chips">${["diese Woche","nächste Woche","in zwei Wochen"].map(w=>`<button type="button" class="chip ${UIW.due===w?"on":""}" data-due="${w}">${w}</button>`).join("")}</div></div>
+        <button class="btn" type="submit">Projektkarte erstellen</button>${UIW.err?`<p class="err">${esc(UIW.err)}</p>`:""}</form>`;}
+  h+=`<h3 style="margin:16px 2px 8px">${KID()?"Meine":firstName()+"s"} Projekte</h3>`;
+  h+=st.projects.length?`<div class="projects">${st.projects.slice().reverse().map(p=>{const x=IDEAS.find(i=>i.k===p.idea)||IDEAS[4];return `<div class="proj"><p class="tiny" style="color:var(--gold);font-weight:800">${esc(x.own?"EIGENE IDEE":x.t.toUpperCase())}</p><h3>${esc(p.thema)}</h3>
+      <p class="small" style="opacity:.85">${p.was?`<b>Was:</b> ${esc(p.was)}<br>`:""}<b>Vorstellen:</b> ${esc((p.who||[]).join(", ")||"noch offen")}<br><b>Bis:</b> ${esc(p.due)}</p>
+      <div class="row-btn" style="margin-top:8px">${ro?`<span class="pill">${PSTATUS[p.s]}</span>`:`<button class="pstat s${p.s}" data-pstat="${p.id}">${PSTATUS[p.s]}</button><button class="linkbtn light" data-pdel="${p.id}">Entfernen</button>`}</div></div>`;}).join("")}</div>`
+    :`<div class="empty">${KID()?"Noch kein Projekt. Wähle oben eine Idee und erstelle deine erste Projektkarte.":"Noch kein Projekt angelegt."}</div>`;
+  h+=`<p class="note">Ein fertiges Projekt ${KID()?"stellst du":"stellt "+firstName()} vor. Später wandert es als Ziel ins Family Board.</p></div>`;
+  return h;
+}
+function wegEltern(){
+  const bridge=[["Hilf mir, es selbst zu tun","Philip denkt. Die KI gibt Tipps und fragt ab, sie löst nicht."],["Vorbereitete Umgebung","Apps, Material und Hausregeln, die zum Denken herausfordern."],["Fehlerkontrolle im Material","Die App zeigt sofort, was sitzt. Die KI prüft, statt zu erledigen."],["Freiarbeit und Präsentation","Station 3: eigene Projekte bauen und anderen erklären."]];
+  return `<div class="sec"><div class="hero"><p class="kicker" style="color:var(--gold)">Für uns Eltern</p><h2 class="hero-h">Montessori und unser Plan wollen <span style="color:var(--gold)">dasselbe</span>.</h2>
+      <p class="hero-p">Selbstständig lernen kennt Philip aus der Schule. Was wir bewusst dazunehmen: das Üben, das Wissen erst sicher macht. Und klare Regeln für die KI.</p>
+      <p class="hero-q">Freiarbeit und Training, nicht Freiarbeit oder Training.</p></div></div>
+    <div class="sec"><h2>Vier Montessori-Prinzipien im Lernweg</h2><div class="stack">${bridge.map(([m,u])=>`<div class="bridge"><div class="b-m"><p class="tiny" style="color:var(--gold);font-weight:800">MONTESSORI</p><b>${esc(m)}</b></div><div class="b-u"><p class="tiny klbl">IM LERNWEG</p><p class="small">${esc(u)}</p></div></div>`).join("")}</div></div>
+    <div class="sec"><h2>Klassisches Üben ist kein Widerspruch</h2><div class="card"><p class="small muted">Wer viel frei arbeitet, unterschätzt leicht das Abfragen und Wiederholen. Beides gehört zusammen.</p>
+      <div class="balance"><div><h3>Freiarbeit gibt</h3><ul class="small"><li>Neugier und Eigenständigkeit</li><li>Zusammenarbeit</li><li>Präsentieren vor anderen</li></ul></div><div class="plus">+</div><div><h3>Training gibt</h3><ul class="small"><li>Grundlagen, die bleiben</li><li>Sicherheit und Tempo</li><li>Ruhe vor Klassenarbeiten</li></ul></div></div>
+      <p class="note">Auch Montessori setzt auf Wiederholung: Das Kind übt mit einem Material, bis es sitzt. Sich selbst abfragen ist genau diese Wiederholung, nur bewusst eingesetzt.</p></div></div>
+    <div class="sec"><h2>Was die Forschung zu KI zeigt</h2><div class="card stack"><p class="small muted">Verglichen mit Schülern, die ganz ohne KI geübt haben. Erst üben alle eine Weile, dann schreiben alle einen Test, jetzt ohne KI.</p>
+      <table class="t study"><thead><tr><th></th><th>Beim Üben (mit KI)</th><th>Im Test danach (ohne KI)</th></tr></thead><tbody>
+        <tr><td><b>ChatGPT ohne Regeln</b><br><span class="tiny muted">gibt fertige Lösungen</span></td><td class="up">↗ +48 %</td><td class="down">↘ −17 %</td></tr>
+        <tr><td><b>KI mit Leitplanken</b><br><span class="tiny muted">gibt nur Schritt für Schritt Tipps</span></td><td class="up">↗ besser</td><td>→ ± 0</td></tr></tbody></table>
+      <p class="small"><b>Das heißt:</b> Ohne Regeln fühlt sich die KI wie eine Hilfe an, aber das Wissen landet nicht im Kopf. Mit Leitplanken hilft sie beim Üben, ohne dass es später fehlt.</p>
+      <p class="tiny muted">Feldstudie mit knapp 1.000 Schülern, Mathematik. <a href="https://econpapers.repec.org/RePEc:nas:journl:v:122:y:2025:p:e2422633122" target="_blank" rel="noopener">Bastani et al., PNAS 2025</a>. Schüler, die selbst entscheiden durften, wann sie die KI fragen, lernten ebenfalls weniger.</p></div></div>
+    <div class="sec"><h2>Was Motivation stärkt und was sie bremst</h2><div class="dd"><div class="dcol yes"><h3>Stärkt</h3><ul class="small"><li>Fortschritt sichtbar machen</li><li>Konkretes Lob für den Weg, nicht nur das Ergebnis</li><li>Gemeinsam feiern, gemeinsame Erlebnisse</li><li>Philip mitentscheiden lassen</li></ul></div>
+      <div class="dcol no"><h3>Vorsicht</h3><ul class="small"><li>Vorher versprochene Sachbelohnungen</li><li>Punkte gegen Geld oder Bildschirmzeit</li><li>Punkte und Serien als Dauermotor</li><li>Noten als einziger Grund zu lernen</li></ul></div></div><p class="note">Gilt auch für das Family Board.</p></div>`;
+}
+/* Interaktion im Lernweg */
+function lwClick(b){
+  const st=LWS(),d=b.dataset;
+  if(d.wsub){S.wsub=d.wsub;try{localStorage.setItem("cockpit-wsub",d.wsub);}catch(x){}render();scrollTo(0,0);return true;}
+  if(d.station!=null){S.station=+d.station;render();return true;}
+  if(d.rule!=null){const i=+d.rule;UIW.rule[i]=!UIW.rule[i];if(UIW.rule[i]&&KID()&&!st.rules.includes(i)){st.rules.push(i);lwSave(st);}else render();return true;}
+  if(d.filter){UIW.filter=d.filter;render();return true;}
+  if(d.tool){UIW.tool=d.tool;UIW.dice=null;render();const el=document.getElementById("tool-detail");if(el)el.scrollIntoView({behavior:"smooth",block:"nearest"});return true;}
+  if(d.tried){const i=st.tried.indexOf(d.tried);if(i>=0)st.tried.splice(i,1);else st.tried.push(d.tried);lwSave(st);return true;}
+  if(d.dice){let x;do{x=DICE[Math.floor(Math.random()*DICE.length)];}while(x===UIW.dice);UIW.dice=x;render();return true;}
+  if(d.timer){const t=TOOLS.find(x=>x.k===UIW.tool),T=UIW.timer&&UIW.timer.k===t.k?UIW.timer:(UIW.timer&&clearInterval(UIW.timer.id),UIW.timer={k:t.k,left:t.w.sec,id:null});
+    if(d.timer==="reset"){clearInterval(T.id);T.id=null;T.left=t.w.sec;}
+    else if(T.id){clearInterval(T.id);T.id=null;}
+    else{if(T.left<=0)T.left=t.w.sec;T.id=setInterval(()=>{T.left--;const c=document.getElementById("clock");if(T.left<=0){clearInterval(T.id);T.id=null;if(UIW.tool===T.k)render();return;}if(c)c.textContent=Math.floor(T.left/60)+":"+String(T.left%60).padStart(2,"0");},1000);}
+    render();return true;}
+  if(d.idea){const prev=IDEAS.find(x=>x.k===UIW.idea);UIW.thema=(document.getElementById("p-thema")||{}).value||UIW.thema;const cur=(document.getElementById("p-was")||{}).value;
+    UIW.idea=d.idea;const nx=IDEAS.find(x=>x.k===d.idea);UIW.was=!cur||cur===prev.was?nx.was:cur;render();return true;}
+  if(d.who){UIW.thema=(document.getElementById("p-thema")||{}).value||"";UIW.was=(document.getElementById("p-was")||{}).value||"";const i=UIW.who.indexOf(d.who);if(i>=0)UIW.who.splice(i,1);else UIW.who.push(d.who);render();return true;}
+  if(d.due){UIW.thema=(document.getElementById("p-thema")||{}).value||"";UIW.was=(document.getElementById("p-was")||{}).value||"";UIW.due=d.due;render();return true;}
+  if(d.pstat){const p=st.projects.find(x=>String(x.id)===d.pstat);if(p){p.s=(p.s+1)%3;lwSave(st);}return true;}
+  if(d.pdel){st.projects=st.projects.filter(x=>String(x.id)!==d.pdel);lwSave(st);return true;}
+  /* Dokumente */
+  if(d.lw==="appr"){docApprove(+d.id);return true;}
+  if(d.lw==="unappr"){docUnapprove(+d.id);return true;}
+  if(d.lw==="view"){S.viewV[d.doc]=d.id?+d.id:null;S.hist=null;render();scrollTo(0,0);return true;}
+  if(d.lw==="hist"){S.hist=S.hist===d.doc?null:d.doc;render();return true;}
+  if(d.lw==="edit"){const D=docState(d.doc);S.edit={doc:d.doc,draft:clone((D.pending||D.shown||{}).content),note:""};S.lwMsg=null;render();scrollTo(0,0);return true;}
+  if(d.lw==="cancel"){S.edit=null;S.lwMsg=null;render();return true;}
+  if(d.lw==="save"){docPropose();return true;}
+  if(d.lw==="ndel"){noteDel(d.id);return true;}
+  if(d.edSt!=null&&S.edit){S.edit.draft.aktuell=+d.edSt;render();return true;}
+  if(d.edAdd&&S.edit){const sec=DOCS[S.edit.doc].secs.find(x=>x.k===d.edAdd);(S.edit.draft[d.edAdd]=S.edit.draft[d.edAdd]||[]).push(Object.fromEntries(sec.f.map(([f])=>[f,""])));render();return true;}
+  if(d.edDel&&S.edit){const [k,i]=d.edDel.split("|");S.edit.draft[k].splice(+i,1);render();return true;}
+  if(d.edUp&&S.edit){const [k,i]=d.edUp.split("|"),a=S.edit.draft[k],j=+i;if(j>0)[a[j-1],a[j]]=[a[j],a[j-1]];render();return true;}
+  return false;
+}
+document.addEventListener("input",e=>{
+  const el=e.target;if(!S.edit||!el.dataset||!el.dataset.ed)return;const p=el.dataset.ed.split("|");
+  if(p[0]==="note")S.edit.note=el.value;else if(p[0]==="t")S.edit.draft[p[1]]=el.value;else S.edit.draft[p[0]][+p[1]][p[2]]=el.value;
+});
+document.addEventListener("submit",e=>{
+  const f=e.target;
+  if(f.classList.contains("note-form")){e.preventDefault();const t=f.querySelector("textarea").value.trim();if(t)noteAdd(f.dataset.topic,t);return;}
+  if(f.id==="planner"){e.preventDefault();const thema=document.getElementById("p-thema").value.trim(),was=document.getElementById("p-was").value.trim();
+    if(!thema){UIW.err="Schreib noch ein Thema rein.";UIW.was=was;render();return;}
+    const st=LWS();st.projects.push({id:Date.now(),idea:UIW.idea,thema,was,who:UIW.who.slice(),due:UIW.due,s:0});UIW.err=null;UIW.thema="";lwSave(st);}
+},true);
+
+/* ---------- Kindgerechte Texte für „Mein Stand“ ---------- */
+const KIDTYP={"genau-statt-gerundet":"Du rechnest oft ganz genau, obwohl du erst runden sollst.","nur-eine-gerundet":"Du rundest oft nur eine der beiden Zahlen.","klammer-uebersehen":"Du rechnest von links nach rechts und lässt die Klammer aus.","nur-klammer":"Die Klammer rechnest du richtig – dann hörst du zu früh auf.","punkt-vor-strich":"Mal und Geteilt kommen vor Plus und Minus – das rutscht dir noch durch.","uebertrag":"Du vergisst manchmal die kleine 1 beim Übertrag.","entbuendeln":"Beim Minus vergisst du manchmal das Entbündeln.","zehner":"Beim Zehnerübergang verrutschst du manchmal um 10.","reihe":"In der Einmaleins-Reihe verrutschst du manchmal um einen Schritt.","verdoppelt":"Du verdoppelst manchmal, obwohl der Selbstlaut lang ist.","nicht-verdoppelt":"Du vergisst manchmal den doppelten Mitlaut nach einem kurzen Selbstlaut.","ie-statt-i":"Du schreibst manchmal ie, obwohl das i kurz ist.","i-statt-ie":"Beim langen i vergisst du manchmal das e.","schreibweise":"Du weißt das Wort, nur ein Buchstabe wackelt."};
+const KIDTIPS={ueberschlag:"Lies zuerst: Was soll ich tun? Runden heißt: auf den nächsten Zehner. Erst beide Zahlen runden, dann rechnen.",klammer:"Klammer zuerst ausrechnen, Ergebnis aufschreiben, dann mit dem Rest weiterrechnen. Frag Mama oder Papa, ob sie es dir einmal zeigen.",mauer:"Zwei Steine nebeneinander zusammenzählen – das Ergebnis kommt in den Stein darüber. Reihe für Reihe nach oben.",schriftlich:"Nimm einen Zettel und schreib die kleine 1 auf.",schriftmal:"Nimm einen Zettel und schreib die Überträge klein auf.",luecke:"Denk an die Umkehraufgabe: 35 + ? = 52 heißt 52 − 35.",probe:"Rechne die Umkehraufgabe – kommt wieder die erste Zahl heraus?",mal:"Sag die schwierigen Einmaleins-Reihen laut auf.",geteilt:"Geteilt geht über das Einmaleins: Welche Zahl mal 8 ergibt 56?",text:"Lies die Aufgabe laut und frag dich: Was ist gefragt?"};
+const DE_KIDTIPS={doppel:"Sprich das Wort langsam. Ist der Selbstlaut kurz (Puppe, Sonne)? Dann kommt ein doppelter Mitlaut. Ist er lang (Tafel, Hose)? Dann nur einer.",i:"Hör auf das i: lang (Biene, Tier) → meistens ie. Kurz (Wind, Kind) → nur i.",s:"Kurzer Selbstlaut → ss (Kuss). Langer Selbstlaut oder ei/au → ß (Fuß, heiß).",ck:"Nach kurzem Selbstlaut ck (Rock). Nach langem oder nach l, n, r nur k.",tz:"Nach kurzem Selbstlaut tz (Katze). Nach l, n, r nur z (Kerze).",gross:"Passt der, die oder das davor? Dann schreibst du groß.",_:"Schau dir die Wörter unter „Aufgaben → Deutsch“ an."};
+
+
 /* ---------- Gerüst ---------- */
 function header(){
   const tm=S.loaded?S.loaded.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):"";
-  const lastSync=Object.values(S.P).map(r=>r.updated_at).sort().pop();
+  const lastSync=Object.entries(S.P).filter(([k])=>k!=="lernweg").map(([,r])=>r.updated_at).sort().pop();
   const ago=lastSync?new Date(lastSync).toLocaleString("de-DE",{weekday:"short",day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):null;
-  return `<header class="top"><div class="row1"><div><div class="kicker">Eltern-Cockpit</div><h1>${esc(S.kid.display_name)}</h1></div>
+  const fam=S.tab==="weg"||S.tab==="manifest";
+  const title=S.tab==="weg"?(KID()?"Dein Lernweg":"Unser Lernweg"):S.tab==="manifest"?"Unser Manifest":KID()?({heute:"Mein Stand",aufgaben:"Meine Aufgaben",entwicklung:"Meine Entwicklung"}[S.tab]):esc(S.kid.display_name);
+  return `<header class="top"><div class="row1"><div><div class="kicker">${fam?"Lernweg · Familie":KID()?"Lernweg · "+esc(S.kid.display_name):"Lernweg · Eltern-Cockpit"}</div><h1>${title}</h1></div>
     <button class="btn ghost" data-act="reload" aria-label="Neu laden">↻ ${tm}</button></div>
-    ${S.kids.length>1?`<div class="chips" style="margin-top:10px">${S.kids.map(k=>`<button class="chip ${k.id===S.kid.id?"on":""}" data-kid="${k.id}">${esc(k.display_name)}</button>`).join("")}</div>`:""}
-    ${ago?`<p class="small muted" style="margin-top:4px">Zuletzt geübt und abgeglichen: ${ago} Uhr</p>`:""}</header>`;
+    ${fam?"":S.kids.length>1?`<div class="chips" style="margin-top:10px">${S.kids.map(k=>`<button class="chip ${k.id===S.kid.id?"on":""}" data-kid="${k.id}">${esc(k.display_name)}</button>`).join("")}</div>`:""}
+    ${ago&&!fam?`<p class="small muted" style="margin-top:4px">Zuletzt geübt und abgeglichen: ${ago} Uhr</p>`:""}</header>`;
 }
 function render(){
   const app=$("#app"),tabs=$("#tabs");
   if(!FS.session()){tabs.hidden=true;app.innerHTML=vLogin();return;}
-  if(S.err&&!S.kid){tabs.hidden=true;app.innerHTML=`<div class="login card stack"><h2>Eltern-Cockpit</h2><p class="err">${esc(S.err)}</p><button class="btn" data-act="reload">Nochmal versuchen</button><button class="btn ghost" data-act="out">Abmelden</button></div>`;return;}
+  if(S.err&&!S.kid){tabs.hidden=true;app.innerHTML=`<div class="login card stack"><h2>Lernweg</h2><p class="err">${esc(S.err)}</p><button class="btn" data-act="reload">Nochmal versuchen</button><button class="btn ghost" data-act="out">Abmelden</button></div>`;return;}
   if(!S.kid){tabs.hidden=true;app.innerHTML=`<p class="muted" style="margin-top:30vh;text-align:center"><span class="spin"></span></p>`;return;}
   tabs.hidden=false;tabs.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));
-  const v={heute:vHeute,aufgaben:vAufgaben,entwicklung:vEntwicklung}[S.tab]||vHeute;
+  const hl=tabs.querySelector('[data-l="heute"]');if(hl)hl.textContent=KID()?"Mein Stand":"Überblick";
+  const v={weg:vWeg,manifest:vManifest,heute:vHeute,aufgaben:vAufgaben,entwicklung:vEntwicklung}[S.tab]||vHeute;
   app.innerHTML=header()+(S.err?`<p class="err" style="margin:6px 0">${esc(S.err)}</p>`:"")+v()+`<p class="tiny muted" style="text-align:center;margin-top:28px">Angemeldet als ${esc((FS.member()||{}).display_name||"")} · <button data-act="out" style="background:none;border:0;padding:0;text-decoration:underline;color:inherit;font-size:inherit;cursor:pointer">Abmelden</button></p>`;
 }
 function vLogin(){
-  return `<div class="login stack"><div><div class="kicker">Familienspeicher</div><h1>Eltern-Cockpit</h1></div>
-    <p class="muted small">Lernstände, Aufgaben und Entwicklung aus Lern-Match, Spürnase und dem Testtrainer. Nur für Eltern.</p>
+  return `<div class="login stack"><div><div class="kicker">Familienspeicher</div><h1>Unser Lernweg</h1></div>
+    <p class="muted small">Weg, Manifest, Lernstände und Entwicklung – für die ganze Familie. Jeder meldet sich mit seinem eigenen Konto an.</p>
     <form id="login" class="stack"><input class="inp" id="mail" type="email" autocomplete="username" placeholder="E-Mail" value="${esc(S.mail||"")}" required>
     <input class="inp" id="pw" type="password" autocomplete="current-password" placeholder="Passwort" required>
     <button class="btn" type="submit" ${S.busy?"disabled":""}>${S.busy?"Melde an …":"Anmelden"}</button></form>
@@ -679,9 +1079,9 @@ async function boot(){
   try{
     const m=FS.member()||await FS.loadMember();
     if(!m){S.err="Dieses Konto gehört noch zu keiner Familie.";render();return;}
-    if(m.role!=="parent"){S.err="Das Cockpit ist für Eltern gedacht. Mit diesem Konto ("+m.display_name+") geht es nicht.";render();return;}
+    S.me=m;
     if(!C.lm)await loadContent();
-    const all=await FS.familyMembers();S.kids=(all||[]).filter(x=>x.role==="child");
+    const all=await FS.familyMembers();S.members=all||[];S.kids=m.role==="child"?S.members.filter(x=>x.id===m.id):S.members.filter(x=>x.role==="child");
     if(!S.kids.length){S.err="In der Familie ist noch kein Kind angelegt.";render();return;}
     const keep=S.kid&&S.kids.find(k=>k.id===S.kid.id);S.kid=keep||S.kids[0];
     await loadKid();
@@ -692,14 +1092,15 @@ async function boot(){
 document.addEventListener("click",async e=>{
   const b=e.target.closest("button,[data-tab],summary");if(!b)return;
   if(b.matches("summary")){const d=b.parentElement;if(d.dataset.k)setTimeout(()=>{S.open[d.dataset.k]=d.open;},0);return;}
+  if(lwClick(b))return;
   const tab=b.dataset.tab,sub=b.dataset.sub,go=b.dataset.go;
-  if(tab){S.tab=tab;try{localStorage.setItem("cockpit-tab",tab);}catch(x){}render();scrollTo(0,0);return;}
+  if(tab){S.tab=tab;S.edit=null;S.hist=null;S.lwMsg=null;try{localStorage.setItem("cockpit-tab",tab);}catch(x){}render();scrollTo(0,0);return;}
   if(sub||go){S.sub=sub||go;S.tab="aufgaben";try{localStorage.setItem("cockpit-sub",S.sub);localStorage.setItem("cockpit-tab","aufgaben");}catch(x){}render();if(go)scrollTo(0,0);return;}
   if(b.dataset.range!=null){S.range=+b.dataset.range;render();return;}
   if(b.dataset.toggle){S.open[b.dataset.toggle]=!S.open[b.dataset.toggle];render();return;}
   if(b.dataset.kid){S.kid=S.kids.find(k=>k.id===b.dataset.kid);S.P={};S.log=[];S.daily=[];render();boot();return;}
   if(b.dataset.act==="reload"){boot();return;}
-  if(b.dataset.act==="out"){await FS.signOut();S.kid=null;S.kids=[];S.P={};S.err=null;render();}
+  if(b.dataset.act==="out"){await FS.signOut();S.kid=null;S.kids=[];S.me=null;S.members=[];S.P={};S.docs=[];S.appr=[];S.notes=[];S.edit=null;S.err=null;render();}
 });
 document.addEventListener("submit",e=>{
   if(e.target.id!=="login")return;e.preventDefault();
