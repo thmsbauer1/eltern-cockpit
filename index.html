@@ -761,7 +761,9 @@ function vEntwicklung(){
    Fassungen liegen in family_docs, Zustimmungen in doc_approvals.
    Eine Fassung gilt, wenn alle Familienmitglieder zugestimmt haben.
    ===================================================================== */
-const KID=()=>!!(S.me&&S.me.role==="child");
+const REALKID=()=>!!(S.me&&S.me.role==="child");
+/* KID(): Kindersprache – für Philip selbst oder wenn Eltern seine Ansicht als Vorschau ansehen */
+const KID=()=>REALKID()||!!S.preview;
 const memName=id=>{const m=S.members.find(x=>x.id===id);return m?m.display_name:"Claude";};
 const firstName=()=>esc(S.kid?S.kid.display_name:"Philip");
 const DOCS={
@@ -808,6 +810,7 @@ async function docPropose(){
 }
 /* Status, Zustimmen, Ändern, Verlauf – für beide Dokumente gleich */
 function docBar(doc){
+  if(S.preview)return `<p class="note">Vorschau: Zustimmen und Ändern geht hier nicht – das macht ${firstName()} mit seinem eigenen Konto.</p>`;
   const D=docState(doc),me=S.me.id,v=D.pending||D.cur||D.latest;if(!v)return"";
   const names=id=>S.members.map(m=>`<span class="who ${D.ap(id).includes(m.id)?"yes":""}">${D.ap(id).includes(m.id)?"✓":"○"} ${esc(m.display_name)}</span>`).join("");
   let h="";
@@ -866,7 +869,7 @@ function vManifest(){
 function notesHTML(topic){
   const N=S.notes.filter(n=>n.topic===topic);
   return `<div class="card stack"><p class="small muted">${topic==="manifest"?"Was hat geklappt, was nicht? Daraus werden Änderungsvorschläge.":"Beobachtungen auf dem Weg. Sie helfen, Stationen und Regeln anzupassen."}</p>
-    <form class="note-form" data-topic="${topic}"><textarea class="inp" rows="2" maxlength="1000" placeholder="${KID()?"Was ist dir aufgefallen?":"Was ist uns aufgefallen?"}" required></textarea><button class="btn sm" type="submit">Notieren</button></form>
+    ${S.preview?"":`<form class="note-form" data-topic="${topic}"><textarea class="inp" rows="2" maxlength="1000" placeholder="${KID()?"Was ist dir aufgefallen?":"Was ist uns aufgefallen?"}" required></textarea><button class="btn sm" type="submit">Notieren</button></form>`}
     ${N.length?N.map(n=>`<div class="item"><div class="q small"><b>${esc(memName(n.member_id))}</b> <span class="tiny muted">${fmtDT(n.created_at)}</span><br>${esc(n.body)}</div>${n.member_id===S.me.id||S.me.role==="parent"?`<button class="iconbtn" data-lw="ndel" data-id="${n.id}" aria-label="Löschen">✕</button>`:""}</div>`).join(""):'<p class="tiny muted">Noch nichts notiert.</p>'}</div>`;
 }
 async function noteAdd(topic,body){
@@ -906,7 +909,7 @@ function wegWeg(){
 /* ---------- Für Philip: Forscher-Pass, Regeln, Werkzeugkiste, Werkstatt ---------- */
 const LWS=()=>{const d=(S.P.lernweg||{}).data||{};return {rules:d.rules||[],tried:d.tried||[],projects:d.projects||[]};};
 async function lwSave(st){
-  if(!KID())return;S.P.lernweg={data:Object.assign({},st,{savedAt:Date.now()}),updated_at:new Date().toISOString()};render();
+  if(!REALKID())return;S.P.lernweg={data:Object.assign({},st,{savedAt:Date.now()}),updated_at:new Date().toISOString()};render();
   try{await FS.push("lernweg",S.P.lernweg.data);}catch(e){S.lwMsg="Speichern ging gerade nicht – Internet?";render();}
 }
 const STAMPS=[{k:"regel",t:"Regel-Kenner",i:"🛡️",ok:s=>s.rules.length>=5},{k:"trick",t:"Trick-Tester",i:"🧪",ok:s=>s.tried.length>=3},{k:"projekt",t:"Projekt-Starter",i:"🚀",ok:s=>s.projects.length>=1},{k:"erfinder",t:"Erfinder",i:"⭐",ok:s=>s.projects.some(p=>p.s===2)}];
@@ -927,14 +930,14 @@ const PSTATUS=["Geplant","Läuft","Fertig"];
 const UIW={rule:{},tool:"abfragen",filter:"alle",idea:"mc",who:["Mama","Papa"],due:"nächste Woche",timer:null,dice:null,thema:"",was:"Das Thema in Minecraft nachbauen"};
 const battery=n=>`<span class="batt">${[1,2,3].map(i=>`<i class="${i<=n?"on":""}"></i>`).join("")}</span>`;
 function wegPhilip(){
-  const st=LWS(),c=docContent("lernweg").c,rules=c.regeln||[],ro=!KID(),n=STAMPS.filter(s=>s.ok(st)).length;
+  const st=LWS(),c=docContent("lernweg").c,rules=c.regeln||[],ro=!REALKID(),n=STAMPS.filter(s=>s.ok(st)).length;
   const t=TOOLS.find(x=>x.k===UIW.tool)||TOOLS[0],tier=TIERS.find(x=>x.k===t.tier),done=st.tried.includes(t.k);
   const fmtT=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
   let h=`<div class="sec"><div class="hero"><p class="kicker" style="color:var(--gold)">${KID()?"Für dich":"Für Philip"}</p><h2 class="hero-h">${KID()?"Du bist":"Philip ist"} der <span style="color:var(--gold)">Forscher</span>. Die KI ist ${KID()?"dein":"sein"} Assistent.</h2>
     <p class="hero-p">Eine KI kann ${KID()?"dir":"ihm"} die Hausaufgaben schreiben. Dann kann sie es und ${KID()?"du":"er"} nicht. Hier ${KID()?"lernst du":"lernt er"} in drei Schritten, wie ${KID()?"du":"er"} selbst schlauer ${KID()?"wirst":"wird"}. Für jeden Schritt gibt es einen Stempel.</p>
     <div class="stamps">${STAMPS.map(s=>`<div class="stamp ${s.ok(st)?"on":""}"><span class="ring">${s.i}</span>${esc(s.t)}</div>`).join("")}</div>
     <div class="passbar"><i style="width:${n/4*100}%"></i></div><p class="tiny" style="opacity:.8;font-weight:700">${n===4?"Alle 4 Stempel! Echter Forscher.":n+" von 4 Stempeln"}</p></div></div>
-    ${ro?`<p class="note">So sieht ${firstName()} seinen Bereich. Stempel, ausprobierte Tricks und Projekte trägt er selbst ein – ihr seht hier seinen Stand.</p>`:""}
+    ${ro&&!KID()?`<p class="note">So sieht ${firstName()} seinen Bereich. Stempel, ausprobierte Tricks und Projekte trägt er selbst ein – ihr seht hier seinen Stand.</p>`:""}
     ${S.lwMsg?`<p class="err">${esc(S.lwMsg)}</p>`:""}
     <div class="sec"><h2>1 · ${KID()?"Deine":"Die"} KI-Regeln <span class="small muted" style="font-weight:400">${st.rules.length} von ${rules.length} entdeckt</span></h2><p class="small muted" style="margin:-4px 0 8px 2px">Tippe auf jede Karte. Die Regeln gelten für die ganze Familie. Papa auch.</p>
       <div class="rules">${rules.map((r,i)=>{const on=UIW.rule[i],seen=st.rules.includes(i);return `<button class="rule ${on?"on":""}" data-rule="${i}"><span class="rn">${i+1}</span><b>${esc(r.t)}</b>${on?`<span class="small">${esc(r.d||"")}</span>`:`<span class="tiny muted">${seen?"Entdeckt ✓":"Warum?"}</span>`}</button>`;}).join("")}</div></div>
@@ -992,7 +995,7 @@ function lwClick(b){
   const st=LWS(),d=b.dataset;
   if(d.wsub){S.wsub=d.wsub;try{localStorage.setItem("cockpit-wsub",d.wsub);}catch(x){}render();scrollTo(0,0);return true;}
   if(d.station!=null){S.station=+d.station;render();return true;}
-  if(d.rule!=null){const i=+d.rule;UIW.rule[i]=!UIW.rule[i];if(UIW.rule[i]&&KID()&&!st.rules.includes(i)){st.rules.push(i);lwSave(st);}else render();return true;}
+  if(d.rule!=null){const i=+d.rule;UIW.rule[i]=!UIW.rule[i];if(UIW.rule[i]&&REALKID()&&!st.rules.includes(i)){st.rules.push(i);lwSave(st);}else render();return true;}
   if(d.filter){UIW.filter=d.filter;render();return true;}
   if(d.tool){UIW.tool=d.tool;UIW.dice=null;render();const el=document.getElementById("tool-detail");if(el)el.scrollIntoView({behavior:"smooth",block:"nearest"});return true;}
   if(d.tried){const i=st.tried.indexOf(d.tried);if(i>=0)st.tried.splice(i,1);else st.tried.push(d.tried);lwSave(st);return true;}
@@ -1050,6 +1053,7 @@ function header(){
   const title=S.tab==="weg"?(KID()?"Dein Lernweg":"Unser Lernweg"):S.tab==="manifest"?"Unser Manifest":KID()?({heute:"Mein Stand",aufgaben:"Meine Aufgaben",entwicklung:"Meine Entwicklung"}[S.tab]):esc(S.kid.display_name);
   return `<header class="top"><div class="row1"><div><div class="kicker">${fam?"Lernweg · Familie":KID()?"Lernweg · "+esc(S.kid.display_name):"Lernweg · Eltern-Cockpit"}</div><h1>${title}</h1></div>
     <button class="btn ghost" data-act="reload" aria-label="Neu laden">↻ ${tm}</button></div>
+    ${S.me&&S.me.role==="parent"?(S.preview?`<div class="lw-banner small row-btn" style="justify-content:space-between;margin-top:10px"><span>👁 <b>Vorschau:</b> So sieht ${firstName()} die Seite.</span><button class="btn sm" data-act="preview">Vorschau beenden</button></div>`:`<button class="chip" style="margin-top:10px" data-act="preview">👁 Als ${firstName()} ansehen</button>`):""}
     ${fam?"":S.kids.length>1?`<div class="chips" style="margin-top:10px">${S.kids.map(k=>`<button class="chip ${k.id===S.kid.id?"on":""}" data-kid="${k.id}">${esc(k.display_name)}</button>`).join("")}</div>`:""}
     ${ago&&!fam?`<p class="small muted" style="margin-top:4px">Zuletzt geübt und abgeglichen: ${ago} Uhr</p>`:""}</header>`;
 }
@@ -1099,8 +1103,9 @@ document.addEventListener("click",async e=>{
   if(b.dataset.range!=null){S.range=+b.dataset.range;render();return;}
   if(b.dataset.toggle){S.open[b.dataset.toggle]=!S.open[b.dataset.toggle];render();return;}
   if(b.dataset.kid){S.kid=S.kids.find(k=>k.id===b.dataset.kid);S.P={};S.log=[];S.daily=[];render();boot();return;}
+  if(b.dataset.act==="preview"){S.preview=!S.preview;S.edit=null;S.hist=null;render();scrollTo(0,0);return;}
   if(b.dataset.act==="reload"){boot();return;}
-  if(b.dataset.act==="out"){await FS.signOut();S.kid=null;S.kids=[];S.me=null;S.members=[];S.P={};S.docs=[];S.appr=[];S.notes=[];S.edit=null;S.err=null;render();}
+  if(b.dataset.act==="out"){await FS.signOut();S.kid=null;S.kids=[];S.me=null;S.preview=false;S.members=[];S.P={};S.docs=[];S.appr=[];S.notes=[];S.edit=null;S.err=null;render();}
 });
 document.addEventListener("submit",e=>{
   if(e.target.id!=="login")return;e.preventDefault();
